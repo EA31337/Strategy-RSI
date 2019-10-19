@@ -60,7 +60,6 @@ class Stg_RSI : public Strategy {
     rsi1_sparams.SetSignals(RSI1_SignalMethod, RSI1_OpenCondition1, RSI1_OpenCondition2, RSI1_CloseCondition, NULL, RSI_SignalLevel, NULL);
     rsi1_sparams.SetStops(RSI_TrailingProfitMethod, RSI_TrailingStopMethod);
     rsi1_sparams.SetMaxSpread(RSI1_MaxSpread);
-    rsi1_sparams.SetId(RSI1);
     return (new Stg_RSI(rsi1_sparams, "RSI1"));
   }
   static Stg_RSI *Init_M5() {
@@ -71,7 +70,6 @@ class Stg_RSI : public Strategy {
     rsi5_sparams.SetSignals(RSI5_SignalMethod, RSI5_OpenCondition1, RSI5_OpenCondition2, RSI5_CloseCondition, NULL, RSI_SignalLevel, NULL);
     rsi5_sparams.SetStops(RSI_TrailingProfitMethod, RSI_TrailingStopMethod);
     rsi5_sparams.SetMaxSpread(RSI5_MaxSpread);
-    rsi5_sparams.SetId(RSI5);
     return (new Stg_RSI(rsi5_sparams, "RSI5"));
   }
   static Stg_RSI *Init_M15() {
@@ -82,7 +80,6 @@ class Stg_RSI : public Strategy {
     rsi15_sparams.SetSignals(RSI15_SignalMethod, RSI15_OpenCondition1, RSI15_OpenCondition2, RSI15_CloseCondition, NULL, RSI_SignalLevel, NULL);
     rsi15_sparams.SetStops(RSI_TrailingProfitMethod, RSI_TrailingStopMethod);
     rsi15_sparams.SetMaxSpread(RSI15_MaxSpread);
-    rsi15_sparams.SetId(RSI15);
     return (new Stg_RSI(rsi15_sparams, "RSI15"));
   }
   static Stg_RSI *Init_M30() {
@@ -93,7 +90,6 @@ class Stg_RSI : public Strategy {
     rsi30_sparams.SetSignals(RSI30_SignalMethod, RSI30_OpenCondition1, RSI30_OpenCondition2, RSI30_CloseCondition, NULL, RSI_SignalLevel, NULL);
     rsi30_sparams.SetStops(RSI_TrailingProfitMethod, RSI_TrailingStopMethod);
     rsi30_sparams.SetMaxSpread(RSI30_MaxSpread);
-    rsi30_sparams.SetId(RSI30);
     return (new Stg_RSI(rsi30_sparams, "RSI30"));
   }
   static Stg_RSI *Init(ENUM_TIMEFRAMES _tf) {
@@ -129,9 +125,6 @@ class Stg_RSI : public Strategy {
     switch (_cmd) {
       case ORDER_TYPE_BUY:
         _result = rsi_0 > 0 && rsi_0 < (50 - _signal_level1);
-        if (_result && VerboseDebug) {
-          PrintFormat("RSI %s on buy: %g < %g", this.Chart().TfToString(), rsi_0, 50 - _signal_level1);
-        }
         if (_signal_method != 0) {
           _result &= is_valid;
           if (METHOD(_signal_method, 0)) _result &= rsi_0 < rsi_1;
@@ -144,9 +137,6 @@ class Stg_RSI : public Strategy {
         break;
       case ORDER_TYPE_SELL:
         _result = rsi_0 > 0 && rsi_0 > (50 + _signal_level1);
-        if (_result && VerboseDebug) {
-          PrintFormat("RSI %s on sell: %g > %g", this.Chart().TfToString(), rsi_0, 50 + _signal_level1);
-        }
         if (_signal_method != 0) {
           _result &= is_valid;
           if (METHOD(_signal_method, 0)) _result &= rsi_0 > rsi_1;
@@ -158,7 +148,6 @@ class Stg_RSI : public Strategy {
         }
         break;
     }
-    _result &= _signal_method <= 0 || Convert::ValueToOp(curr_trend) == _cmd;
     return _result;
   }
 
