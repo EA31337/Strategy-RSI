@@ -52,47 +52,51 @@ class Stg_RSI : public Strategy {
 
   void Stg_RSI(StgParams &_params, string _name) : Strategy(_params, _name) {}
 
-  static Stg_RSI *Init_M1() {
+  static Stg_RSI *Init_M1(long _magic_no = NULL) {
     ChartParams cparams1(PERIOD_M1);
     IndicatorParams rsi_iparams(10, INDI_RSI);
     RSI_Params rsi1_iparams(RSI_Period_M1, RSI_Applied_Price);
     StgParams rsi1_sparams(new Trade(PERIOD_M1, _Symbol), new Indi_RSI(rsi1_iparams, rsi_iparams, cparams1), NULL, NULL);
+    rsi1_sparams.SetMagicNo(_magic_no);
     rsi1_sparams.SetSignals(RSI1_SignalMethod, RSI1_OpenCondition1, RSI1_OpenCondition2, RSI1_CloseCondition, NULL, RSI_SignalLevel, NULL);
     rsi1_sparams.SetStops(RSI_TrailingProfitMethod, RSI_TrailingStopMethod);
     rsi1_sparams.SetMaxSpread(RSI1_MaxSpread);
     return (new Stg_RSI(rsi1_sparams, "RSI1"));
   }
-  static Stg_RSI *Init_M5() {
+  static Stg_RSI *Init_M5(long _magic_no = NULL) {
     ChartParams cparams5(PERIOD_M5);
     IndicatorParams rsi_iparams(10, INDI_RSI);
     RSI_Params rsi5_iparams(RSI_Period_M5, RSI_Applied_Price);
     StgParams rsi5_sparams(new Trade(PERIOD_M5, _Symbol), new Indi_RSI(rsi5_iparams, rsi_iparams, cparams5), NULL, NULL);
+    rsi5_sparams.SetMagicNo(_magic_no);
     rsi5_sparams.SetSignals(RSI5_SignalMethod, RSI5_OpenCondition1, RSI5_OpenCondition2, RSI5_CloseCondition, NULL, RSI_SignalLevel, NULL);
     rsi5_sparams.SetStops(RSI_TrailingProfitMethod, RSI_TrailingStopMethod);
     rsi5_sparams.SetMaxSpread(RSI5_MaxSpread);
     return (new Stg_RSI(rsi5_sparams, "RSI5"));
   }
-  static Stg_RSI *Init_M15() {
+  static Stg_RSI *Init_M15(long _magic_no = NULL) {
     ChartParams cparams15(PERIOD_M15);
     IndicatorParams rsi_iparams(10, INDI_RSI);
     RSI_Params rsi15_iparams(RSI_Period_M15, RSI_Applied_Price);
     StgParams rsi15_sparams(new Trade(PERIOD_M15, _Symbol), new Indi_RSI(rsi15_iparams, rsi_iparams, cparams15), NULL, NULL);
+    rsi15_sparams.SetMagicNo(_magic_no);
     rsi15_sparams.SetSignals(RSI15_SignalMethod, RSI15_OpenCondition1, RSI15_OpenCondition2, RSI15_CloseCondition, NULL, RSI_SignalLevel, NULL);
     rsi15_sparams.SetStops(RSI_TrailingProfitMethod, RSI_TrailingStopMethod);
     rsi15_sparams.SetMaxSpread(RSI15_MaxSpread);
     return (new Stg_RSI(rsi15_sparams, "RSI15"));
   }
-  static Stg_RSI *Init_M30() {
+  static Stg_RSI *Init_M30(long _magic_no = NULL) {
     ChartParams cparams30(PERIOD_M30);
     IndicatorParams rsi_iparams(10, INDI_RSI);
     RSI_Params rsi30_iparams(RSI_Period_M30, RSI_Applied_Price);
     StgParams rsi30_sparams(new Trade(PERIOD_M30, _Symbol), new Indi_RSI(rsi30_iparams, rsi_iparams, cparams30), NULL, NULL);
+    rsi30_sparams.SetMagicNo(_magic_no);
     rsi30_sparams.SetSignals(RSI30_SignalMethod, RSI30_OpenCondition1, RSI30_OpenCondition2, RSI30_CloseCondition, NULL, RSI_SignalLevel, NULL);
     rsi30_sparams.SetStops(RSI_TrailingProfitMethod, RSI_TrailingStopMethod);
     rsi30_sparams.SetMaxSpread(RSI30_MaxSpread);
     return (new Stg_RSI(rsi30_sparams, "RSI30"));
   }
-  static Stg_RSI *Init(ENUM_TIMEFRAMES _tf) {
+  static Stg_RSI *Init(ENUM_TIMEFRAMES _tf = NULL) {
     switch (_tf) {
       case PERIOD_M1:  return Init_M1();
       case PERIOD_M5:  return Init_M5();
@@ -103,7 +107,7 @@ class Stg_RSI : public Strategy {
   }
 
   /**
-   * Check if RSI indicator is on buy.
+   * Check if RSI indicator is on buy/sell.
    *
    * @param
    *   _cmd (int) - type of trade order command
