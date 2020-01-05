@@ -16,35 +16,27 @@
 // User input params.
 INPUT string __RSI_Parameters__ = "-- Settings for the Relative Strength Index indicator --"; // >>> RSI <<<
 INPUT uint RSI_Active_Tf = 12; // Activate timeframes (1-255, e.g. M1=1,M5=2,M15=4,M30=8,H1=16,H2=32...)
-INPUT int RSI_Period_M1 = 32; // Period for M1
-INPUT int RSI_Period_M5 = 2; // Period for M5
-INPUT int RSI_Period_M15 = 2; // Period for M15
-INPUT int RSI_Period_M30 = 2; // Period for M30
+INPUT int RSI_Period = 2; // Period
 INPUT ENUM_APPLIED_PRICE RSI_Applied_Price = 3; // Applied Price
 INPUT uint RSI_Shift = 0; // Shift
 INPUT ENUM_TRAIL_TYPE RSI_TrailingStopMethod = 6; // Trail stop method
 INPUT ENUM_TRAIL_TYPE RSI_TrailingProfitMethod = 11; // Trail profit method
-INPUT int RSI_SignalLevel = 36; // Signal level (-49-49)
-INPUT int RSI1_SignalMethod = -63; // Signal method for M1 (-63-63)
-INPUT int RSI5_SignalMethod = -61; // Signal method for M5 (-63-63)
-INPUT int RSI15_SignalMethod = -63; // Signal method for M15 (-63-63)
-INPUT int RSI30_SignalMethod = 0; // Signal method for M30 (-63-63)
-INPUT int RSI1_OpenCondition1 = 1; // Open condition 1 for M1 (0-1023)
-INPUT int RSI1_OpenCondition2 = 0; // Open condition 2 for M1 (0-1023)
-INPUT ENUM_MARKET_EVENT RSI1_CloseCondition = 1; // Close condition for M1
-INPUT int RSI5_OpenCondition1 = 1; // Open condition 1 for M5 (0-1023)
-INPUT int RSI5_OpenCondition2 = 0; // Open condition 2 for M5 (0-1023)
-INPUT ENUM_MARKET_EVENT RSI5_CloseCondition = 31; // Close condition for M5
-INPUT int RSI15_OpenCondition1 = 389; // Open condition 1 for M15 (0-1023)
-INPUT int RSI15_OpenCondition2 = 0; // Open condition 2 for M15 (0-1023)
-INPUT ENUM_MARKET_EVENT RSI15_CloseCondition = 1; // Close condition for M15
-INPUT int RSI30_OpenCondition1 = 195; // Open condition 1 for M30 (0-1023)
-INPUT int RSI30_OpenCondition2 = 0; // Open condition 2 for M30 (0-1023)
-INPUT ENUM_MARKET_EVENT RSI30_CloseCondition = 1; // Close condition for M30
-double RSI1_MaxSpread  =  6.0; // Max spread to trade for M1 (pips)
-double RSI5_MaxSpread  =  7.0; // Max spread to trade for M5 (pips)
-double RSI15_MaxSpread =  8.0; // Max spread to trade for M15 (pips)
-double RSI30_MaxSpread = 10.0; // Max spread to trade for M30 (pips)
+INPUT int RSI_SignalLevel1 = 36; // Signal level 1 (-49-49)
+int RSI_SignalLevel2 = 0; // Signal level 2 (-49-49)
+INPUT int RSI_SignalBaseMethod = 0; // Signal base method (-63-63)
+INPUT int RSI_SignalOpenMethod1 = 0; // Signal open method 1 (0-1023)
+int RSI_SignalOpenMethod2 = 0; // Signal open method 2 (0-1023)
+INPUT ENUM_MARKET_EVENT RSI_SignalCloseMethod1 = 0; // Signal close method 1
+INPUT ENUM_MARKET_EVENT RSI_SignalCloseMethod2 = 0; // Signal close method 2
+double RSI_MaxSpread = 0; // Max spread to trade (pips)
+
+// Loads SET files.
+#resource "sets/EURUSD_M1.set" as string Stg_RSI_EURUSD_M1
+#resource "sets/EURUSD_M5.set" as string Stg_RSI_EURUSD_M5
+#resource "sets/EURUSD_M15.set" as string Stg_RSI_EURUSD_M15
+#resource "sets/EURUSD_M30.set" as string Stg_RSI_EURUSD_M30
+#resource "sets/EURUSD_H1.set" as string Stg_RSI_EURUSD_H1
+#resource "sets/EURUSD_H4.set" as string Stg_RSI_EURUSD_H4
 
 class Stg_RSI : public Strategy {
 
@@ -52,62 +44,17 @@ class Stg_RSI : public Strategy {
 
   void Stg_RSI(StgParams &_params, string _name) : Strategy(_params, _name) {}
 
-  static Stg_RSI *Init_M1(long _magic_no = NULL, ENUM_LOG_LEVEL _log_level = V_INFO) {
-    ChartParams cparams1(PERIOD_M1);
-    IndicatorParams rsi_iparams(10, INDI_RSI);
-    RSI_Params rsi1_iparams(RSI_Period_M1, RSI_Applied_Price);
-    StgParams rsi1_sparams(new Trade(PERIOD_M1, _Symbol), new Indi_RSI(rsi1_iparams, rsi_iparams, cparams1), NULL, NULL);
-    rsi1_sparams.logger.SetLevel(_log_level);
-    rsi1_sparams.SetMagicNo(_magic_no);
-    rsi1_sparams.SetSignals(RSI1_SignalMethod, RSI1_OpenCondition1, RSI1_OpenCondition2, RSI1_CloseCondition, NULL, RSI_SignalLevel, NULL);
-    rsi1_sparams.SetStops(RSI_TrailingProfitMethod, RSI_TrailingStopMethod);
-    rsi1_sparams.SetMaxSpread(RSI1_MaxSpread);
-    return (new Stg_RSI(rsi1_sparams, "RSI1"));
-  }
-  static Stg_RSI *Init_M5(long _magic_no = NULL, ENUM_LOG_LEVEL _log_level = V_INFO) {
-    ChartParams cparams5(PERIOD_M5);
-    IndicatorParams rsi_iparams(10, INDI_RSI);
-    RSI_Params rsi5_iparams(RSI_Period_M5, RSI_Applied_Price);
-    StgParams rsi5_sparams(new Trade(PERIOD_M5, _Symbol), new Indi_RSI(rsi5_iparams, rsi_iparams, cparams5), NULL, NULL);
-    rsi5_sparams.logger.SetLevel(_log_level);
-    rsi5_sparams.SetMagicNo(_magic_no);
-    rsi5_sparams.SetSignals(RSI5_SignalMethod, RSI5_OpenCondition1, RSI5_OpenCondition2, RSI5_CloseCondition, NULL, RSI_SignalLevel, NULL);
-    rsi5_sparams.SetStops(RSI_TrailingProfitMethod, RSI_TrailingStopMethod);
-    rsi5_sparams.SetMaxSpread(RSI5_MaxSpread);
-    return (new Stg_RSI(rsi5_sparams, "RSI5"));
-  }
-  static Stg_RSI *Init_M15(long _magic_no = NULL, ENUM_LOG_LEVEL _log_level = V_INFO) {
-    ChartParams cparams15(PERIOD_M15);
-    IndicatorParams rsi_iparams(10, INDI_RSI);
-    RSI_Params rsi15_iparams(RSI_Period_M15, RSI_Applied_Price);
-    StgParams rsi15_sparams(new Trade(PERIOD_M15, _Symbol), new Indi_RSI(rsi15_iparams, rsi_iparams, cparams15), NULL, NULL);
-    rsi15_sparams.logger.SetLevel(_log_level);
-    rsi15_sparams.SetMagicNo(_magic_no);
-    rsi15_sparams.SetSignals(RSI15_SignalMethod, RSI15_OpenCondition1, RSI15_OpenCondition2, RSI15_CloseCondition, NULL, RSI_SignalLevel, NULL);
-    rsi15_sparams.SetStops(RSI_TrailingProfitMethod, RSI_TrailingStopMethod);
-    rsi15_sparams.SetMaxSpread(RSI15_MaxSpread);
-    return (new Stg_RSI(rsi15_sparams, "RSI15"));
-  }
-  static Stg_RSI *Init_M30(long _magic_no = NULL, ENUM_LOG_LEVEL _log_level = V_INFO) {
-    ChartParams cparams30(PERIOD_M30);
-    IndicatorParams rsi_iparams(10, INDI_RSI);
-    RSI_Params rsi30_iparams(RSI_Period_M30, RSI_Applied_Price);
-    StgParams rsi30_sparams(new Trade(PERIOD_M30, _Symbol), new Indi_RSI(rsi30_iparams, rsi_iparams, cparams30), NULL, NULL);
-    rsi30_sparams.logger.SetLevel(_log_level);
-    rsi30_sparams.SetMagicNo(_magic_no);
-    rsi30_sparams.SetSignals(RSI30_SignalMethod, RSI30_OpenCondition1, RSI30_OpenCondition2, RSI30_CloseCondition, NULL, RSI_SignalLevel, NULL);
-    rsi30_sparams.SetStops(RSI_TrailingProfitMethod, RSI_TrailingStopMethod);
-    rsi30_sparams.SetMaxSpread(RSI30_MaxSpread);
-    return (new Stg_RSI(rsi30_sparams, "RSI30"));
-  }
   static Stg_RSI *Init(ENUM_TIMEFRAMES _tf = NULL, long _magic_no = NULL, ENUM_LOG_LEVEL _log_level = V_INFO) {
-    switch (_tf) {
-      case PERIOD_M1:  return Init_M1(_magic_no, _log_level);
-      case PERIOD_M5:  return Init_M5(_magic_no, _log_level);
-      case PERIOD_M15: return Init_M15(_magic_no, _log_level);
-      case PERIOD_M30: return Init_M30(_magic_no, _log_level);
-      default: return NULL;
-    }
+    ChartParams cparams(_tf);
+    RSI_Params rsi_params(RSI_Period, RSI_Applied_Price);
+    IndicatorParams rsi_iparams(10, INDI_RSI);
+    StgParams rsi_sparams(new Trade(_tf, _Symbol), new Indi_RSI(rsi_params, rsi_iparams, cparams), NULL, NULL);
+    rsi_sparams.logger.SetLevel(_log_level);
+    rsi_sparams.SetMagicNo(_magic_no);
+    rsi_sparams.SetSignals(RSI_SignalBaseMethod, RSI_SignalOpenMethod1, RSI_SignalOpenMethod2, RSI_SignalCloseMethod1, RSI_SignalCloseMethod2, RSI_SignalLevel1, RSI_SignalLevel2);
+    rsi_sparams.SetStops(RSI_TrailingProfitMethod, RSI_TrailingStopMethod);
+    rsi_sparams.SetMaxSpread(RSI_MaxSpread);
+    return (new Stg_RSI(rsi_sparams, "RSI"));
   }
 
   /**
