@@ -45,16 +45,43 @@ class Stg_RSI : public Strategy {
   void Stg_RSI(StgParams &_params, string _name) : Strategy(_params, _name) {}
 
   static Stg_RSI *Init(ENUM_TIMEFRAMES _tf = NULL, long _magic_no = NULL, ENUM_LOG_LEVEL _log_level = V_INFO) {
+    // Initialize strategy data.
+    string _set_data;
+    switch (_tf) {
+      case PERIOD_M1:  _set_data = Stg_RSI_EURUSD_M1;
+      case PERIOD_M5:  _set_data = Stg_RSI_EURUSD_M5;
+      case PERIOD_M15: _set_data = Stg_RSI_EURUSD_M15;
+      case PERIOD_M30: _set_data = Stg_RSI_EURUSD_M30;
+    }
+    Dict<string, double> *_input = new Dict<string, double>(_set_data, "\n");
+    // Initialize strategy parameters.
     ChartParams cparams(_tf);
-    RSI_Params rsi_params(RSI_Period, RSI_Applied_Price);
+    RSI_Params rsi_params(
+      (int) _input.GetByKey("RSI_Period", RSI_Period),
+      (ENUM_APPLIED_PRICE) _input.GetByKey("RSI_Applied_Price", RSI_Applied_Price)
+    );
     IndicatorParams rsi_iparams(10, INDI_RSI);
-    StgParams rsi_sparams(new Trade(_tf, _Symbol), new Indi_RSI(rsi_params, rsi_iparams, cparams), NULL, NULL);
-    rsi_sparams.logger.SetLevel(_log_level);
-    rsi_sparams.SetMagicNo(_magic_no);
-    rsi_sparams.SetSignals(RSI_SignalBaseMethod, RSI_SignalOpenMethod1, RSI_SignalOpenMethod2, RSI_SignalCloseMethod1, RSI_SignalCloseMethod2, RSI_SignalLevel1, RSI_SignalLevel2);
-    rsi_sparams.SetStops(RSI_TrailingProfitMethod, RSI_TrailingStopMethod);
-    rsi_sparams.SetMaxSpread(RSI_MaxSpread);
-    return (new Stg_RSI(rsi_sparams, "RSI"));
+    StgParams sparams(new Trade(_tf, _Symbol), new Indi_RSI(rsi_params, rsi_iparams, cparams), NULL, NULL);
+    sparams.logger.SetLevel(_log_level);
+    sparams.SetMagicNo(_magic_no);
+    sparams.SetSignals(
+      (int) _input.GetByKey("RSI_SignalBaseMethod", RSI_SignalBaseMethod),
+      (int) _input.GetByKey("RSI_SignalOpenMethod1", RSI_SignalOpenMethod1),
+      (int) _input.GetByKey("RSI_SignalOpenMethod2", RSI_SignalOpenMethod2),
+      (ENUM_MARKET_EVENT) _input.GetByKey("RSI_SignalCloseMethod1", RSI_SignalCloseMethod1),
+      (ENUM_MARKET_EVENT) _input.GetByKey("RSI_SignalCloseMethod2", RSI_SignalCloseMethod2),
+      _input.GetByKey("RSI_SignalLevel1", RSI_SignalLevel1),
+      _input.GetByKey("RSI_SignalLevel2", RSI_SignalLevel2)
+    );
+    sparams.SetStops(
+      (ENUM_TRAIL_TYPE) _input.GetByKey("RSI_TrailingProfitMethod", RSI_TrailingProfitMethod),
+      (ENUM_TRAIL_TYPE) _input.GetByKey("RSI_TrailingStopMethod", RSI_TrailingStopMethod)
+    );
+    sparams.SetMaxSpread(_input.GetByKey("RSI_MaxSpread", RSI_MaxSpread));
+    // Initialize strategy instance.
+    Strategy *_strat = new Stg_RSI(sparams, "RSI");
+    _strat.SetData(_input);
+    return _strat;
   }
 
   /**
