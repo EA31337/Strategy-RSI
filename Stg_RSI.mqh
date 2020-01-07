@@ -1,6 +1,6 @@
 //+------------------------------------------------------------------+
 //|                  EA31337 - multi-strategy advanced trading robot |
-//|                       Copyright 2016-2019, 31337 Investments Ltd |
+//|                       Copyright 2016-2020, 31337 Investments Ltd |
 //|                                       https://github.com/EA31337 |
 //+------------------------------------------------------------------+
 
@@ -15,10 +15,10 @@
 
 // User input params.
 INPUT string __RSI_Parameters__ = "-- Settings for the Relative Strength Index indicator --"; // >>> RSI <<<
-INPUT uint RSI_Active_Tf = 12; // Activate timeframes (1-255, e.g. M1=1,M5=2,M15=4,M30=8,H1=16,H2=32...)
+INPUT int RSI_Active_Tf = 127; // Activate timeframes (1-255, e.g. M1=1,M5=2,M15=4,M30=8,H1=16,H2=32,H4=64...)
 INPUT int RSI_Period = 2; // Period
 INPUT ENUM_APPLIED_PRICE RSI_Applied_Price = 3; // Applied Price
-INPUT uint RSI_Shift = 0; // Shift
+INPUT int RSI_Shift = 0; // Shift
 INPUT ENUM_TRAIL_TYPE RSI_TrailingStopMethod = 6; // Trail stop method
 INPUT ENUM_TRAIL_TYPE RSI_TrailingProfitMethod = 11; // Trail profit method
 INPUT int RSI_SignalLevel1 = 36; // Signal level 1 (-49-49)
@@ -30,13 +30,48 @@ INPUT ENUM_MARKET_EVENT RSI_SignalCloseMethod1 = 0; // Signal close method 1
 INPUT ENUM_MARKET_EVENT RSI_SignalCloseMethod2 = 0; // Signal close method 2
 double RSI_MaxSpread = 0; // Max spread to trade (pips)
 
-// Loads SET files.
-#resource "sets/EURUSD_M1.set" as string Stg_RSI_EURUSD_M1
-#resource "sets/EURUSD_M5.set" as string Stg_RSI_EURUSD_M5
-#resource "sets/EURUSD_M15.set" as string Stg_RSI_EURUSD_M15
-#resource "sets/EURUSD_M30.set" as string Stg_RSI_EURUSD_M30
-#resource "sets/EURUSD_H1.set" as string Stg_RSI_EURUSD_H1
-#resource "sets/EURUSD_H4.set" as string Stg_RSI_EURUSD_H4
+// Struct to define strategy parameters to override.
+struct Stg_RSI_Params : Stg_Params {
+  unsigned int RSI_Period;
+  ENUM_APPLIED_PRICE RSI_Applied_Price;
+  int RSI_Shift;
+  ENUM_TRAIL_TYPE RSI_TrailingStopMethod;
+  ENUM_TRAIL_TYPE RSI_TrailingProfitMethod;
+  double RSI_SignalLevel1;
+  double RSI_SignalLevel2;
+  long RSI_SignalBaseMethod;
+  long RSI_SignalOpenMethod1;
+  long RSI_SignalOpenMethod2;
+  ENUM_MARKET_EVENT RSI_SignalCloseMethod1;
+  ENUM_MARKET_EVENT RSI_SignalCloseMethod2;
+  double RSI_MaxSpread;
+
+  // Constructor: Set default param values.
+  Stg_RSI_Params() :
+    RSI_Period(::RSI_Period),
+    RSI_Applied_Price(::RSI_Applied_Price),
+    RSI_Shift(::RSI_Shift),
+    RSI_TrailingStopMethod(::RSI_TrailingStopMethod),
+    RSI_TrailingProfitMethod(::RSI_TrailingProfitMethod),
+    RSI_SignalLevel1(::RSI_SignalLevel1),
+    RSI_SignalLevel2(::RSI_SignalLevel2),
+    RSI_SignalBaseMethod(::RSI_SignalBaseMethod),
+    RSI_SignalOpenMethod1(::RSI_SignalOpenMethod1),
+    RSI_SignalOpenMethod2(::RSI_SignalOpenMethod2),
+    RSI_SignalCloseMethod1(::RSI_SignalCloseMethod1),
+    RSI_SignalCloseMethod2(::RSI_SignalCloseMethod2),
+    RSI_MaxSpread(::RSI_MaxSpread)
+  {}
+  void Init() {}
+};
+
+// Loads pair specific param values.
+#include "sets/EURUSD_M1.h"
+#include "sets/EURUSD_M5.h"
+#include "sets/EURUSD_M15.h"
+#include "sets/EURUSD_M30.h"
+#include "sets/EURUSD_H1.h"
+#include "sets/EURUSD_H4.h"
 
 class Stg_RSI : public Strategy {
 
@@ -45,42 +80,33 @@ class Stg_RSI : public Strategy {
   void Stg_RSI(StgParams &_params, string _name) : Strategy(_params, _name) {}
 
   static Stg_RSI *Init(ENUM_TIMEFRAMES _tf = NULL, long _magic_no = NULL, ENUM_LOG_LEVEL _log_level = V_INFO) {
-    // Initialize strategy data.
-    string _set_data;
+    // Initialize strategy initial values.
+    Stg_RSI_Params _params;
     switch (_tf) {
-      case PERIOD_M1:  _set_data = Stg_RSI_EURUSD_M1;
-      case PERIOD_M5:  _set_data = Stg_RSI_EURUSD_M5;
-      case PERIOD_M15: _set_data = Stg_RSI_EURUSD_M15;
-      case PERIOD_M30: _set_data = Stg_RSI_EURUSD_M30;
+      case PERIOD_M1:  { Stg_RSI_EURUSD_M1_Params  _new_params; _params = _new_params; }
+      case PERIOD_M5:  { Stg_RSI_EURUSD_M5_Params  _new_params; _params = _new_params; }
+      case PERIOD_M15: { Stg_RSI_EURUSD_M15_Params _new_params; _params = _new_params; }
+      case PERIOD_M30: { Stg_RSI_EURUSD_M30_Params _new_params; _params = _new_params; }
+      case PERIOD_H1:  { Stg_RSI_EURUSD_H1_Params  _new_params; _params = _new_params; }
+      case PERIOD_H4:  { Stg_RSI_EURUSD_H4_Params  _new_params; _params = _new_params; }
     }
-    Dict<string, double> *_input = new Dict<string, double>(_set_data, "\n");
     // Initialize strategy parameters.
     ChartParams cparams(_tf);
-    RSI_Params rsi_params(
-      (int) _input.GetByKey("RSI_Period", RSI_Period),
-      (ENUM_APPLIED_PRICE) _input.GetByKey("RSI_Applied_Price", RSI_Applied_Price)
-    );
+    RSI_Params rsi_params(_params.RSI_Period, _params.RSI_Applied_Price);
     IndicatorParams rsi_iparams(10, INDI_RSI);
     StgParams sparams(new Trade(_tf, _Symbol), new Indi_RSI(rsi_params, rsi_iparams, cparams), NULL, NULL);
     sparams.logger.SetLevel(_log_level);
     sparams.SetMagicNo(_magic_no);
     sparams.SetSignals(
-      (int) _input.GetByKey("RSI_SignalBaseMethod", RSI_SignalBaseMethod),
-      (int) _input.GetByKey("RSI_SignalOpenMethod1", RSI_SignalOpenMethod1),
-      (int) _input.GetByKey("RSI_SignalOpenMethod2", RSI_SignalOpenMethod2),
-      (ENUM_MARKET_EVENT) _input.GetByKey("RSI_SignalCloseMethod1", RSI_SignalCloseMethod1),
-      (ENUM_MARKET_EVENT) _input.GetByKey("RSI_SignalCloseMethod2", RSI_SignalCloseMethod2),
-      _input.GetByKey("RSI_SignalLevel1", RSI_SignalLevel1),
-      _input.GetByKey("RSI_SignalLevel2", RSI_SignalLevel2)
+      _params.RSI_SignalBaseMethod,
+      _params.RSI_SignalOpenMethod1, _params.RSI_SignalOpenMethod2,
+      _params.RSI_SignalCloseMethod1, _params.RSI_SignalCloseMethod2,
+      _params.RSI_SignalLevel1, _params.RSI_SignalLevel2
     );
-    sparams.SetStops(
-      (ENUM_TRAIL_TYPE) _input.GetByKey("RSI_TrailingProfitMethod", RSI_TrailingProfitMethod),
-      (ENUM_TRAIL_TYPE) _input.GetByKey("RSI_TrailingStopMethod", RSI_TrailingStopMethod)
-    );
-    sparams.SetMaxSpread(_input.GetByKey("RSI_MaxSpread", RSI_MaxSpread));
+    sparams.SetStops(_params.RSI_TrailingProfitMethod, _params.RSI_TrailingStopMethod);
+    sparams.SetMaxSpread(_params.RSI_MaxSpread);
     // Initialize strategy instance.
     Strategy *_strat = new Stg_RSI(sparams, "RSI");
-    _strat.SetData(_input);
     return _strat;
   }
 
