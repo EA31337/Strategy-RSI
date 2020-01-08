@@ -21,11 +21,11 @@ INPUT ENUM_APPLIED_PRICE RSI_Applied_Price = 3; // Applied Price
 INPUT int RSI_Shift = 0; // Shift
 INPUT ENUM_TRAIL_TYPE RSI_TrailingStopMethod = 6; // Trail stop method
 INPUT ENUM_TRAIL_TYPE RSI_TrailingProfitMethod = 11; // Trail profit method
-INPUT int RSI_SignalLevel1 = 36; // Signal level 1 (-49-49)
-int RSI_SignalLevel2 = 0; // Signal level 2 (-49-49)
-INPUT int RSI_SignalBaseMethod = 0; // Signal base method (-63-63)
-INPUT int RSI_SignalOpenMethod1 = 0; // Signal open method 1 (0-1023)
-int RSI_SignalOpenMethod2 = 0; // Signal open method 2 (0-1023)
+INPUT double RSI_SignalOpenLevel = 36; // Signal open level (-49-49)
+INPUT long RSI_SignalBaseMethod = 0; // Signal base method (-63-63)
+INPUT long RSI_SignalOpenMethod1 = 0; // Signal open method 1 (0-1023)
+INPUT long RSI_SignalOpenMethod2 = 0; // Signal open method 2 (0-1023)
+INPUT double RSI_SignalCloseLevel = 36; // Signal close level (-49-49)
 INPUT ENUM_MARKET_EVENT RSI_SignalCloseMethod1 = 0; // Signal close method 1
 INPUT ENUM_MARKET_EVENT RSI_SignalCloseMethod2 = 0; // Signal close method 2
 double RSI_MaxSpread = 0; // Max spread to trade (pips)
@@ -37,11 +37,11 @@ struct Stg_RSI_Params : Stg_Params {
   int RSI_Shift;
   ENUM_TRAIL_TYPE RSI_TrailingStopMethod;
   ENUM_TRAIL_TYPE RSI_TrailingProfitMethod;
-  double RSI_SignalLevel1;
-  double RSI_SignalLevel2;
+  double RSI_SignalOpenLevel;
   long RSI_SignalBaseMethod;
   long RSI_SignalOpenMethod1;
   long RSI_SignalOpenMethod2;
+  double RSI_SignalCloseLevel;
   ENUM_MARKET_EVENT RSI_SignalCloseMethod1;
   ENUM_MARKET_EVENT RSI_SignalCloseMethod2;
   double RSI_MaxSpread;
@@ -53,11 +53,11 @@ struct Stg_RSI_Params : Stg_Params {
     RSI_Shift(::RSI_Shift),
     RSI_TrailingStopMethod(::RSI_TrailingStopMethod),
     RSI_TrailingProfitMethod(::RSI_TrailingProfitMethod),
-    RSI_SignalLevel1(::RSI_SignalLevel1),
-    RSI_SignalLevel2(::RSI_SignalLevel2),
+    RSI_SignalOpenLevel(::RSI_SignalOpenLevel),
     RSI_SignalBaseMethod(::RSI_SignalBaseMethod),
     RSI_SignalOpenMethod1(::RSI_SignalOpenMethod1),
     RSI_SignalOpenMethod2(::RSI_SignalOpenMethod2),
+    RSI_SignalCloseLevel(::RSI_SignalCloseLevel),
     RSI_SignalCloseMethod1(::RSI_SignalCloseMethod1),
     RSI_SignalCloseMethod2(::RSI_SignalCloseMethod2),
     RSI_MaxSpread(::RSI_MaxSpread)
@@ -101,7 +101,7 @@ class Stg_RSI : public Strategy {
       _params.RSI_SignalBaseMethod,
       _params.RSI_SignalOpenMethod1, _params.RSI_SignalOpenMethod2,
       _params.RSI_SignalCloseMethod1, _params.RSI_SignalCloseMethod2,
-      _params.RSI_SignalLevel1, _params.RSI_SignalLevel2
+      _params.RSI_SignalOpenLevel, _params.RSI_SignalCloseLevel
     );
     sparams.SetStops(_params.RSI_TrailingProfitMethod, _params.RSI_TrailingStopMethod);
     sparams.SetMaxSpread(_params.RSI_MaxSpread);
@@ -111,52 +111,53 @@ class Stg_RSI : public Strategy {
   }
 
   /**
-   * Check if RSI indicator is on buy/sell.
+   * Check strategy's opening signal.
    *
-   * @param
-   *   _cmd (int) - type of trade order command
-   *   _signal_method (int) - signal method to use by using bitwise AND operation
-   *   _signal_level1 - 1st signal level to consider the signal
-   *   _signal_level2 - 2nd signal level to consider the signal
-   * @result bool
-   * Returns true on signal for the given _cmd, otherwise false.
    */
-  bool SignalOpen(ENUM_ORDER_TYPE _cmd, long _signal_method = EMPTY, double _signal_level1 = EMPTY, double _signal_level2 = EMPTY) {
+  bool SignalOpen(ENUM_ORDER_TYPE _cmd, long _signal_method = EMPTY, double _signal_level = EMPTY) {
     bool _result = false;
     double rsi_0 = ((Indi_RSI *) this.Data()).GetValue(0);
     double rsi_1 = ((Indi_RSI *) this.Data()).GetValue(1);
     double rsi_2 = ((Indi_RSI *) this.Data()).GetValue(2);
     if (_signal_method == EMPTY) _signal_method = GetSignalBaseMethod();
-    if (_signal_level1 == EMPTY) _signal_level1 = GetSignalLevel1();
-    if (_signal_level2 == EMPTY) _signal_level2 = GetSignalLevel2();
+    if (_signal_level == EMPTY) _signal_level = GetSignalOpenLevel();
     bool is_valid = fmin(fmin(rsi_0, rsi_1), rsi_2) > 0;
     switch (_cmd) {
       case ORDER_TYPE_BUY:
-        _result = rsi_0 > 0 && rsi_0 < (50 - _signal_level1);
+        _result = rsi_0 > 0 && rsi_0 < (50 - _signal_level);
         if (_signal_method != 0) {
           _result &= is_valid;
           if (METHOD(_signal_method, 0)) _result &= rsi_0 < rsi_1;
           if (METHOD(_signal_method, 1)) _result &= rsi_1 < rsi_2;
-          if (METHOD(_signal_method, 2)) _result &= rsi_1 < (50 - _signal_level1);
-          if (METHOD(_signal_method, 3)) _result &= rsi_2  < (50 - _signal_level1);
+          if (METHOD(_signal_method, 2)) _result &= rsi_1 < (50 - _signal_level);
+          if (METHOD(_signal_method, 3)) _result &= rsi_2  < (50 - _signal_level);
           if (METHOD(_signal_method, 4)) _result &= rsi_0 - rsi_1 > rsi_1 - rsi_2;
           if (METHOD(_signal_method, 5)) _result &= rsi_2 > 50;
         }
         break;
       case ORDER_TYPE_SELL:
-        _result = rsi_0 > 0 && rsi_0 > (50 + _signal_level1);
+        _result = rsi_0 > 0 && rsi_0 > (50 + _signal_level);
         if (_signal_method != 0) {
           _result &= is_valid;
           if (METHOD(_signal_method, 0)) _result &= rsi_0 > rsi_1;
           if (METHOD(_signal_method, 1)) _result &= rsi_1 > rsi_2;
-          if (METHOD(_signal_method, 2)) _result &= rsi_1 > (50 + _signal_level1);
-          if (METHOD(_signal_method, 3)) _result &= rsi_2  > (50 + _signal_level1);
+          if (METHOD(_signal_method, 2)) _result &= rsi_1 > (50 + _signal_level);
+          if (METHOD(_signal_method, 3)) _result &= rsi_2  > (50 + _signal_level);
           if (METHOD(_signal_method, 4)) _result &= rsi_1 - rsi_0 > rsi_2 - rsi_1;
           if (METHOD(_signal_method, 5)) _result &= rsi_2 < 50;
         }
         break;
     }
     return _result;
+  }
+
+  /**
+   * Check strategy's closing signal.
+   *
+   */
+  bool SignalClose(ENUM_ORDER_TYPE _cmd, long _signal_method = EMPTY, double _signal_level = EMPTY) {
+    if (_signal_level == EMPTY) _signal_level = GetSignalCloseLevel();
+    return SignalOpen(Order::NegateOrderType(_cmd), _signal_method, _signal_level);
   }
 
 };

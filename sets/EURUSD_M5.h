@@ -14,11 +14,11 @@ struct Stg_RSI_EURUSD_M5_Params : Stg_RSI_Params {
     RSI_Shift = 0;
     RSI_TrailingStopMethod = 6;
     RSI_TrailingProfitMethod = 11;
-    RSI_SignalLevel1 = 36;
-    RSI_SignalLevel2 = 36;
+    RSI_SignalOpenLevel = 36;
     RSI_SignalBaseMethod = -61;
     RSI_SignalOpenMethod1 = 1;
     RSI_SignalOpenMethod2 = 0;
+    RSI_SignalCloseLevel = 36;
     RSI_SignalCloseMethod1 = 1;
     RSI_SignalCloseMethod2 = 0;
     RSI_MaxSpread = 3;
