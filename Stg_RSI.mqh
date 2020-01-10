@@ -128,37 +128,35 @@ class Stg_RSI : public Strategy {
   /**
    * Check strategy's opening signal.
    */
-  bool SignalOpen(ENUM_ORDER_TYPE _cmd, long _signal_method = EMPTY, double _signal_level = EMPTY) {
+  bool SignalOpen(ENUM_ORDER_TYPE _cmd, long _method, double _level) {
     bool _result = false;
     double rsi_0 = ((Indi_RSI *)this.Data()).GetValue(0);
     double rsi_1 = ((Indi_RSI *)this.Data()).GetValue(1);
     double rsi_2 = ((Indi_RSI *)this.Data()).GetValue(2);
-    if (_signal_method == EMPTY) _signal_method = GetSignalBaseMethod();
-    if (_signal_level == EMPTY) _signal_level = GetSignalOpenLevel();
     bool is_valid = fmin(fmin(rsi_0, rsi_1), rsi_2) > 0;
     switch (_cmd) {
       case ORDER_TYPE_BUY:
-        _result = rsi_0 > 0 && rsi_0 < (50 - _signal_level);
-        if (_signal_method != 0) {
+        _result = rsi_0 > 0 && rsi_0 < (50 - _level);
+        if (_method != 0) {
           _result &= is_valid;
-          if (METHOD(_signal_method, 0)) _result &= rsi_0 < rsi_1;
-          if (METHOD(_signal_method, 1)) _result &= rsi_1 < rsi_2;
-          if (METHOD(_signal_method, 2)) _result &= rsi_1 < (50 - _signal_level);
-          if (METHOD(_signal_method, 3)) _result &= rsi_2 < (50 - _signal_level);
-          if (METHOD(_signal_method, 4)) _result &= rsi_0 - rsi_1 > rsi_1 - rsi_2;
-          if (METHOD(_signal_method, 5)) _result &= rsi_2 > 50;
+          if (METHOD(_method, 0)) _result &= rsi_0 < rsi_1;
+          if (METHOD(_method, 1)) _result &= rsi_1 < rsi_2;
+          if (METHOD(_method, 2)) _result &= rsi_1 < (50 - _level);
+          if (METHOD(_method, 3)) _result &= rsi_2 < (50 - _level);
+          if (METHOD(_method, 4)) _result &= rsi_0 - rsi_1 > rsi_1 - rsi_2;
+          if (METHOD(_method, 5)) _result &= rsi_2 > 50;
         }
         break;
       case ORDER_TYPE_SELL:
-        _result = rsi_0 > 0 && rsi_0 > (50 + _signal_level);
-        if (_signal_method != 0) {
+        _result = rsi_0 > 0 && rsi_0 > (50 + _level);
+        if (_method != 0) {
           _result &= is_valid;
-          if (METHOD(_signal_method, 0)) _result &= rsi_0 > rsi_1;
-          if (METHOD(_signal_method, 1)) _result &= rsi_1 > rsi_2;
-          if (METHOD(_signal_method, 2)) _result &= rsi_1 > (50 + _signal_level);
-          if (METHOD(_signal_method, 3)) _result &= rsi_2 > (50 + _signal_level);
-          if (METHOD(_signal_method, 4)) _result &= rsi_1 - rsi_0 > rsi_2 - rsi_1;
-          if (METHOD(_signal_method, 5)) _result &= rsi_2 < 50;
+          if (METHOD(_method, 0)) _result &= rsi_0 > rsi_1;
+          if (METHOD(_method, 1)) _result &= rsi_1 > rsi_2;
+          if (METHOD(_method, 2)) _result &= rsi_1 > (50 + _level);
+          if (METHOD(_method, 3)) _result &= rsi_2 > (50 + _level);
+          if (METHOD(_method, 4)) _result &= rsi_1 - rsi_0 > rsi_2 - rsi_1;
+          if (METHOD(_method, 5)) _result &= rsi_2 < 50;
         }
         break;
     }
@@ -168,15 +166,14 @@ class Stg_RSI : public Strategy {
   /**
    * Check strategy's closing signal.
    */
-  bool SignalClose(ENUM_ORDER_TYPE _cmd, long _signal_method = EMPTY, double _signal_level = EMPTY) {
-    if (_signal_level == EMPTY) _signal_level = GetSignalCloseLevel();
-    return SignalOpen(Order::NegateOrderType(_cmd), _signal_method, _signal_level);
+  bool SignalClose(ENUM_ORDER_TYPE _cmd, long _method, double _level) {
+    return SignalOpen(Order::NegateOrderType(_cmd), _method, _level);
   }
 
   /**
-   * Gets limit value for profit take or stop loss.
+   * Gets price limit value for profit take or stop loss.
    */
-  double ValueLimit(ENUM_ORDER_TYPE _cmd, ENUM_STG_PRICE_LIMIT_MODE _mode, double _level = 0.0) {
+  double PriceLimit(ENUM_ORDER_TYPE _cmd, ENUM_STG_PRICE_LIMIT_MODE _mode, long _method = 0, double _level = 0.0) {
     double _result = -1;
     return _result;
   }
