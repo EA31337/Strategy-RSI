@@ -172,4 +172,12 @@ class Stg_RSI : public Strategy {
     if (_signal_level == EMPTY) _signal_level = GetSignalCloseLevel();
     return SignalOpen(Order::NegateOrderType(_cmd), _signal_method, _signal_level);
   }
+
+  /**
+   * Gets limit value for profit take or stop loss.
+   */
+  double ValueLimit(ENUM_ORDER_TYPE _cmd, ENUM_STG_PRICE_LIMIT_MODE _mode, double _level = 0.0) {
+    double _result = -1;
+    return _result;
+  }
 };
