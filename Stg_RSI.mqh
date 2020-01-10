@@ -17,33 +17,27 @@
 INPUT string __RSI_Parameters__ = "-- RSI strategy params --";  // >>> RSI <<<
 INPUT int RSI_Active_Tf = 127;  // Activated timeframes (1-255) [M1=1,M5=2,M15=4,M30=8,H1=16,H2=32,H4=64...]
 INPUT int RSI_Period = 2;       // Period
-INPUT ENUM_APPLIED_PRICE RSI_Applied_Price = 3;       // Applied Price
-INPUT int RSI_Shift = 0;                              // Shift
-INPUT ENUM_TRAIL_TYPE RSI_TrailingStopMethod = 6;     // Trail stop method
-INPUT ENUM_TRAIL_TYPE RSI_TrailingProfitMethod = 11;  // Trail profit method
-INPUT double RSI_SignalOpenLevel = 36;                // Signal open level (-49-49)
-INPUT long RSI_SignalBaseMethod = 0;                  // Signal base method (-63-63)
-INPUT long RSI_SignalOpenMethod1 = 0;                 // Signal open method 1 (0-1023)
-INPUT long RSI_SignalOpenMethod2 = 0;                 // Signal open method 2 (0-1023)
-INPUT double RSI_SignalCloseLevel = 36;               // Signal close level (-49-49)
-INPUT ENUM_MARKET_EVENT RSI_SignalCloseMethod1 = 0;   // Signal close method 1
-INPUT ENUM_MARKET_EVENT RSI_SignalCloseMethod2 = 0;   // Signal close method 2
-INPUT double RSI_MaxSpread = 0;                       // Max spread to trade (pips)
+INPUT ENUM_APPLIED_PRICE RSI_Applied_Price = 3;  // Applied Price
+INPUT int RSI_Shift = 0;                         // Shift
+INPUT int RSI_SignalOpenMethod = 0;              // Signal open method (-63-63)
+INPUT double RSI_SignalOpenLevel = 36;           // Signal open level (-49-49)
+INPUT int RSI_SignalCloseMethod = 0;             // Signal close method (-63-63)
+INPUT double RSI_SignalCloseLevel = 36;          // Signal close level (-49-49)
+INPUT int RSI_PriceLimitMethod = 0;              // Price limit method
+INPUT double RSI_PriceLimitLevel = 0;            // Price limit level
+INPUT double RSI_MaxSpread = 0;                  // Max spread to trade (pips)
 
 // Struct to define strategy parameters to override.
 struct Stg_RSI_Params : Stg_Params {
   unsigned int RSI_Period;
   ENUM_APPLIED_PRICE RSI_Applied_Price;
   int RSI_Shift;
-  ENUM_TRAIL_TYPE RSI_TrailingStopMethod;
-  ENUM_TRAIL_TYPE RSI_TrailingProfitMethod;
+  int RSI_SignalOpenMethod;
   double RSI_SignalOpenLevel;
-  long RSI_SignalBaseMethod;
-  long RSI_SignalOpenMethod1;
-  long RSI_SignalOpenMethod2;
+  int RSI_SignalCloseMethod;
   double RSI_SignalCloseLevel;
-  ENUM_MARKET_EVENT RSI_SignalCloseMethod1;
-  ENUM_MARKET_EVENT RSI_SignalCloseMethod2;
+  int RSI_PriceLimitMethod;
+  double RSI_PriceLimitLevel;
   double RSI_MaxSpread;
 
   // Constructor: Set default param values.
@@ -51,15 +45,12 @@ struct Stg_RSI_Params : Stg_Params {
       : RSI_Period(::RSI_Period),
         RSI_Applied_Price(::RSI_Applied_Price),
         RSI_Shift(::RSI_Shift),
-        RSI_TrailingStopMethod(::RSI_TrailingStopMethod),
-        RSI_TrailingProfitMethod(::RSI_TrailingProfitMethod),
+        RSI_SignalOpenMethod(::RSI_SignalOpenMethod),
         RSI_SignalOpenLevel(::RSI_SignalOpenLevel),
-        RSI_SignalBaseMethod(::RSI_SignalBaseMethod),
-        RSI_SignalOpenMethod1(::RSI_SignalOpenMethod1),
-        RSI_SignalOpenMethod2(::RSI_SignalOpenMethod2),
+        RSI_SignalCloseMethod(::RSI_SignalCloseMethod),
         RSI_SignalCloseLevel(::RSI_SignalCloseLevel),
-        RSI_SignalCloseMethod1(::RSI_SignalCloseMethod1),
-        RSI_SignalCloseMethod2(::RSI_SignalCloseMethod2),
+        RSI_PriceLimitMethod(::RSI_PriceLimitMethod),
+        RSI_PriceLimitLevel(::RSI_PriceLimitLevel),
         RSI_MaxSpread(::RSI_MaxSpread) {}
   void Init() {}
 };
@@ -115,10 +106,9 @@ class Stg_RSI : public Strategy {
     StgParams sparams(new Trade(_tf, _Symbol), new Indi_RSI(rsi_params, rsi_iparams, cparams), NULL, NULL);
     sparams.logger.SetLevel(_log_level);
     sparams.SetMagicNo(_magic_no);
-    sparams.SetSignals(_params.RSI_SignalBaseMethod, _params.RSI_SignalOpenMethod1, _params.RSI_SignalOpenMethod2,
-                       _params.RSI_SignalCloseMethod1, _params.RSI_SignalCloseMethod2, _params.RSI_SignalOpenLevel,
+    sparams.SetSignals(_params.RSI_SignalOpenMethod, _params.RSI_SignalOpenLevel, _params.RSI_SignalCloseMethod,
                        _params.RSI_SignalCloseLevel);
-    sparams.SetStops(_params.RSI_TrailingProfitMethod, _params.RSI_TrailingStopMethod);
+    sparams.SetPriceLimits(_params.RSI_PriceLimitMethod, _params.RSI_PriceLimitLevel);
     sparams.SetMaxSpread(_params.RSI_MaxSpread);
     // Initialize strategy instance.
     Strategy *_strat = new Stg_RSI(sparams, "RSI");
@@ -128,7 +118,7 @@ class Stg_RSI : public Strategy {
   /**
    * Check strategy's opening signal.
    */
-  bool SignalOpen(ENUM_ORDER_TYPE _cmd, long _method, double _level) {
+  bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method, double _level) {
     bool _result = false;
     double rsi_0 = ((Indi_RSI *)this.Data()).GetValue(0);
     double rsi_1 = ((Indi_RSI *)this.Data()).GetValue(1);
@@ -166,19 +156,19 @@ class Stg_RSI : public Strategy {
   /**
    * Check strategy's closing signal.
    */
-  bool SignalClose(ENUM_ORDER_TYPE _cmd, long _method, double _level) {
+  bool SignalClose(ENUM_ORDER_TYPE _cmd, int _method, double _level) {
     return SignalOpen(Order::NegateOrderType(_cmd), _method, _level);
   }
 
   /**
    * Gets price limit value for profit take or stop loss.
    */
-  double PriceLimit(ENUM_ORDER_TYPE _cmd, ENUM_STG_PRICE_LIMIT_MODE _mode, long _method = 0, double _level = 0.0) {
+  double PriceLimit(ENUM_ORDER_TYPE _cmd, ENUM_STG_PRICE_LIMIT_MODE _mode, int _method = 0, double _level = 0.0) {
     double _trail = _level * Market().GetPipSize();
     int _direction = Order::OrderDirection(_cmd) * (_mode == LIMIT_VALUE_STOP ? -1 : 1);
     double _default_value = Market().GetCloseOffer(_cmd) + _trail * _method * _direction;
     double _result = _default_value;
-    switch ((int) _method) {
+    switch (_method) {
       case 0: {
         // @todo
       }
