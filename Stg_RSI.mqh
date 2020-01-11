@@ -6,7 +6,7 @@
 
 /**
  * @file
- *   Implements RSI strategy based on Relative Strength Index indicator.
+ * Implements RSI strategy based on Relative Strength Index indicator.
  */
 
 // Includes.
@@ -15,7 +15,6 @@
 
 // User input params.
 INPUT string __RSI_Parameters__ = "-- RSI strategy params --";  // >>> RSI <<<
-INPUT int RSI_Active_Tf = 127;  // Activated timeframes (1-255) [M1=1,M5=2,M15=4,M30=8,H1=16,H2=32,H4=64...]
 INPUT int RSI_Period = 2;       // Period
 INPUT ENUM_APPLIED_PRICE RSI_Applied_Price = 3;  // Applied Price
 INPUT int RSI_Shift = 0;                         // Shift
@@ -70,7 +69,7 @@ class Stg_RSI : public Strategy {
   /**
    * Initialize strategy's instance.
    */
-  static Stg_RSI *Init(ENUM_TIMEFRAMES _tf = NULL, long _magic_no = NULL, ENUM_LOG_LEVEL _log_level = V_INFO) {
+  static Stg_RSI *Init(ENUM_TIMEFRAMES _tf = NULL, unsigned long _magic_no = 0, ENUM_LOG_LEVEL _log_level = V_INFO) {
     // Initialize strategy initial values.
     Stg_RSI_Params _params;
     switch (_tf) {
@@ -105,7 +104,7 @@ class Stg_RSI : public Strategy {
     IndicatorParams rsi_iparams(10, INDI_RSI);
     StgParams sparams(new Trade(_tf, _Symbol), new Indi_RSI(rsi_params, rsi_iparams, cparams), NULL, NULL);
     sparams.logger.SetLevel(_log_level);
-    sparams.SetMagicNo(_magic_no);
+    sparams.SetMagicNo(_magic_no > 0 ? _magic_no : rand());
     sparams.SetSignals(_params.RSI_SignalOpenMethod, _params.RSI_SignalOpenLevel, _params.RSI_SignalCloseMethod,
                        _params.RSI_SignalCloseLevel);
     sparams.SetPriceLimits(_params.RSI_PriceLimitMethod, _params.RSI_PriceLimitLevel);
