@@ -9,8 +9,14 @@
  * Implements RSI strategy based on Relative Strength Index indicator.
  */
 
+// Includes.
+#include <EA31337-classes/EA.mqh>
+#include "Stg_RSI.mqh"
+
 // Inputs.
-input int Active_Tf = 127;  // Activated timeframes (1-255) [M1=1,M5=2,M15=4,M30=8,H1=16,H2=32,H4=64...]
+input int Active_Tf = 127;                // Activated timeframes (1-255) [M1=1,M5=2,M15=4,M30=8,H1=16,H2=32,H4=64...]
+input ENUM_LOG_LEVEL Log_Level = V_INFO;  // Log level.
+input bool Info_On_Chart = true;          // Display info on chart.
 
 // Defines.
 #define ea_name "Stg_RSI"
@@ -28,10 +34,6 @@ input int Active_Tf = 127;  // Activated timeframes (1-255) [M1=1,M5=2,M15=4,M30
 #property link ea_link
 #property copyright "Copyright 2016-2019, 31337 Investments Ltd"
 
-// Includes.
-#include "Stg_RSI.mqh"
-#include <EA31337-classes/EA.mqh>
-
 // Class variables.
 EA *ea;
 
@@ -43,16 +45,17 @@ EA *ea;
 int OnInit() {
   bool _result = true;
   // Initialize EA.
-  EAParams ea_params(__FILE__);
+  EAParams ea_params(__FILE__, Log_Level);
+  ea_params.SetChartInfoFreq(Info_On_Chart ? 2 : 0);
   ea = new EA(ea_params);
   // Initialize strategy.
   Collection *_strats = ea.Strategies();
-  if ((Active_Tf & M1B)  == M1B)  _strats.Add(Stg_RSI::Init(PERIOD_M1));
-  if ((Active_Tf & M5B)  == M5B)  _strats.Add(Stg_RSI::Init(PERIOD_M5));
+  if ((Active_Tf & M1B) == M1B) _strats.Add(Stg_RSI::Init(PERIOD_M1));
+  if ((Active_Tf & M5B) == M5B) _strats.Add(Stg_RSI::Init(PERIOD_M5));
   if ((Active_Tf & M15B) == M15B) _strats.Add(Stg_RSI::Init(PERIOD_M15));
   if ((Active_Tf & M30B) == M30B) _strats.Add(Stg_RSI::Init(PERIOD_M30));
-  if ((Active_Tf & H1B)  == H1B)  _strats.Add(Stg_RSI::Init(PERIOD_H1));
-  if ((Active_Tf & H4B)  == H4B)  _strats.Add(Stg_RSI::Init(PERIOD_H4));
+  if ((Active_Tf & H1B) == H1B) _strats.Add(Stg_RSI::Init(PERIOD_H1));
+  if ((Active_Tf & H4B) == H4B) _strats.Add(Stg_RSI::Init(PERIOD_H4));
   return (_result ? INIT_SUCCEEDED : INIT_FAILED);
 }
 
@@ -62,32 +65,14 @@ int OnInit() {
  * Invoked when a new tick for a symbol is received, to the chart of which the Expert Advisor is attached.
  */
 void OnTick() {
-
-/*
-  MqlTick _tick = market.GetTick();
-  bool _tick_procesed = false;
-  for (ENUM_TIMEFRAMES_INDEX tfi = 0; tfi < FINAL_ENUM_TIMEFRAMES_INDEX; tfi++) {
-    if (Object::IsDynamic(trade[tfi]) && trade[tfi].Chart().IsValidTf()) {
-      if (trade[tfi].Chart().IsNewBar()) {
-        trade[tfi].Market().SetTick(_tick);
-        ProcessBar(trade[tfi]);
-        _tick_procesed = true;
-      }
-    }
+  ea.Process();
+  if (!ea.Terminal().IsOptimization()) {
+    ea.Log().Flush(2);
+    ea.UpdateInfoOnChart();
   }
-  if (_tick_procesed) {
-    if (!terminal.IsOptimization()) {
-      terminal.Logger().Flush(false);
-    }
-    if (PrintLogOnChart) {
-      DisplayInfo();
-    }
-  }
-*/
 }
 
 /**
  * Implements "Deinit" event handler function.
  */
-void OnDeinit(const int reason) {
-}
+void OnDeinit(const int reason) { Object::Delete(ea); }

@@ -15,16 +15,16 @@
 
 // User input params.
 INPUT string __RSI_Parameters__ = "-- RSI strategy params --";  // >>> RSI <<<
-INPUT int RSI_Period = 2;       // Period
-INPUT ENUM_APPLIED_PRICE RSI_Applied_Price = 3;  // Applied Price
-INPUT int RSI_Shift = 0;                         // Shift
-INPUT int RSI_SignalOpenMethod = 0;              // Signal open method (-63-63)
-INPUT double RSI_SignalOpenLevel = 36;           // Signal open level (-49-49)
-INPUT int RSI_SignalCloseMethod = 0;             // Signal close method (-63-63)
-INPUT double RSI_SignalCloseLevel = 36;          // Signal close level (-49-49)
-INPUT int RSI_PriceLimitMethod = 0;              // Price limit method
-INPUT double RSI_PriceLimitLevel = 0;            // Price limit level
-INPUT double RSI_MaxSpread = 0;                  // Max spread to trade (pips)
+INPUT int RSI_Period = 2;                                       // Period
+INPUT ENUM_APPLIED_PRICE RSI_Applied_Price = 3;                 // Applied Price
+INPUT int RSI_Shift = 0;                                        // Shift
+INPUT int RSI_SignalOpenMethod = 0;                             // Signal open method (-63-63)
+INPUT double RSI_SignalOpenLevel = 36;                          // Signal open level (-49-49)
+INPUT int RSI_SignalCloseMethod = 0;                            // Signal close method (-63-63)
+INPUT double RSI_SignalCloseLevel = 36;                         // Signal close level (-49-49)
+INPUT int RSI_PriceLimitMethod = 0;                             // Price limit method
+INPUT double RSI_PriceLimitLevel = 0;                           // Price limit level
+INPUT double RSI_MaxSpread = 0;                                 // Max spread to trade (pips)
 
 // Struct to define strategy parameters to override.
 struct Stg_RSI_Params : Stg_Params {
