@@ -9,5 +9,5 @@
  * Implements RSI strategy based on Relative Strength Index indicator.
  */
 
-// Include the main code.
+// Includes the main code.
 #include "Stg_RSI.mq5"
