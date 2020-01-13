@@ -6,7 +6,7 @@
 
 /**
  * @file
- * Implements RSI strategy based on Relative Strength Index indicator.
+ * Implements RSI strategy.
  */
 
 // Includes the main code.
