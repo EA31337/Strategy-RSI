@@ -20,6 +20,8 @@ INPUT ENUM_APPLIED_PRICE RSI_Applied_Price = 3;                 // Applied Price
 INPUT int RSI_Shift = 0;                                        // Shift
 INPUT int RSI_SignalOpenMethod = 0;                             // Signal open method (-63-63)
 INPUT double RSI_SignalOpenLevel = 36;                          // Signal open level (-49-49)
+INPUT int RSI_SignalOpenFilterMethod = 36;                      // Signal open filter method (-49-49)
+INPUT int RSI_SignalOpenBoostMethod = 36;                       // Signal open boost method (-49-49)
 INPUT int RSI_SignalCloseMethod = 0;                            // Signal close method (-63-63)
 INPUT double RSI_SignalCloseLevel = 36;                         // Signal close level (-49-49)
 INPUT int RSI_PriceLimitMethod = 0;                             // Price limit method
@@ -33,6 +35,8 @@ struct Stg_RSI_Params : Stg_Params {
   int RSI_Shift;
   int RSI_SignalOpenMethod;
   double RSI_SignalOpenLevel;
+  int RSI_SignalOpenFilterMethod;
+  int RSI_SignalOpenBoostMethod;
   int RSI_SignalCloseMethod;
   double RSI_SignalCloseLevel;
   int RSI_PriceLimitMethod;
@@ -46,6 +50,8 @@ struct Stg_RSI_Params : Stg_Params {
         RSI_Shift(::RSI_Shift),
         RSI_SignalOpenMethod(::RSI_SignalOpenMethod),
         RSI_SignalOpenLevel(::RSI_SignalOpenLevel),
+        RSI_SignalOpenFilterMethod(::RSI_SignalOpenFilterMethod),
+        RSI_SignalOpenBoostMethod(::RSI_SignalOpenBoostMethod),
         RSI_SignalCloseMethod(::RSI_SignalCloseMethod),
         RSI_SignalCloseLevel(::RSI_SignalCloseLevel),
         RSI_PriceLimitMethod(::RSI_PriceLimitMethod),
@@ -106,6 +112,7 @@ class Stg_RSI : public Strategy {
     sparams.logger.SetLevel(_log_level);
     sparams.SetMagicNo(_magic_no > 0 ? _magic_no : rand());
     sparams.SetSignals(_params.RSI_SignalOpenMethod, _params.RSI_SignalOpenLevel, _params.RSI_SignalCloseMethod,
+                       _params.RSI_SignalOpenFilterMethod, _params.RSI_SignalOpenBoostMethod,
                        _params.RSI_SignalCloseLevel);
     sparams.SetPriceLimits(_params.RSI_PriceLimitMethod, _params.RSI_PriceLimitLevel);
     sparams.SetMaxSpread(_params.RSI_MaxSpread);
@@ -153,6 +160,38 @@ class Stg_RSI : public Strategy {
   }
 
   /**
+   * Check strategy's opening signal additional filter.
+   */
+  bool SignalOpenFilter(ENUM_ORDER_TYPE _cmd, int _method = 0) {
+    bool _result = true;
+    if (_method != 0) {
+      // if (METHOD(_method, 0)) _result &= Trade().IsTrend(_cmd);
+      // if (METHOD(_method, 1)) _result &= Trade().IsPivot(_cmd);
+      // if (METHOD(_method, 2)) _result &= Trade().IsPeakHours(_cmd);
+      // if (METHOD(_method, 3)) _result &= Trade().IsRoundNumber(_cmd);
+      // if (METHOD(_method, 4)) _result &= Trade().IsHedging(_cmd);
+      // if (METHOD(_method, 5)) _result &= Trade().IsPeakBar(_cmd);
+    }
+    return _result;
+  }
+
+  /**
+   * Gets strategy's lot size boost (when enabled).
+   */
+  double SignalOpenBoost(ENUM_ORDER_TYPE _cmd, int _method = 0) {
+    bool _result = 1.0;
+    if (_method != 0) {
+      // if (METHOD(_method, 0)) if (Trade().IsTrend(_cmd)) _result *= 1.1;
+      // if (METHOD(_method, 1)) if (Trade().IsPivot(_cmd)) _result *= 1.1;
+      // if (METHOD(_method, 2)) if (Trade().IsPeakHours(_cmd)) _result *= 1.1;
+      // if (METHOD(_method, 3)) if (Trade().IsRoundNumber(_cmd)) _result *= 1.1;
+      // if (METHOD(_method, 4)) if (Trade().IsHedging(_cmd)) _result *= 1.1;
+      // if (METHOD(_method, 5)) if (Trade().IsPeakBar(_cmd)) _result *= 1.1;
+    }
+    return _result;
+  }
+
+  /**
    * Check strategy's closing signal.
    */
   bool SignalClose(ENUM_ORDER_TYPE _cmd, int _method, double _level) {
@@ -162,9 +201,9 @@ class Stg_RSI : public Strategy {
   /**
    * Gets price limit value for profit take or stop loss.
    */
-  double PriceLimit(ENUM_ORDER_TYPE _cmd, ENUM_STG_PRICE_LIMIT_MODE _mode, int _method = 0, double _level = 0.0) {
+  double PriceLimit(ENUM_ORDER_TYPE _cmd, ENUM_ORDER_TYPE_VALUE _mode, int _method = 0, double _level = 0.0) {
     double _trail = _level * Market().GetPipSize();
-    int _direction = Order::OrderDirection(_cmd) * (_mode == LIMIT_VALUE_STOP ? -1 : 1);
+    int _direction = Order::OrderDirection(_cmd) * (_mode == ORDER_TYPE_SL ? -1 : 1);
     double _default_value = Market().GetCloseOffer(_cmd) + _trail * _method * _direction;
     double _result = _default_value;
     switch (_method) {
