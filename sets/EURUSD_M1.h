@@ -15,7 +15,7 @@ struct Stg_RSI_EURUSD_M1_Params : Stg_RSI_Params {
     RSI_SignalCloseMethod = 0;
     RSI_SignalCloseLevel = 36;
     RSI_PriceLimitMethod = 0;
-    RSI_PriceLimitLevel = 0;
+    RSI_PriceLimitLevel = 2;
     RSI_MaxSpread = 2;
   }
 } stg_rsi_m1;

@@ -7,7 +7,7 @@
 // Defines strategy's parameter values for the given pair symbol and timeframe.
 struct Stg_RSI_EURUSD_H1_Params : Stg_RSI_Params {
   Stg_RSI_EURUSD_H1_Params() {
-    RSI_Period = 2;
+    RSI_Period = 12;
     RSI_Applied_Price = 3;
     RSI_Shift = 0;
     RSI_SignalOpenMethod = 0;
@@ -15,7 +15,7 @@ struct Stg_RSI_EURUSD_H1_Params : Stg_RSI_Params {
     RSI_SignalCloseMethod = 0;
     RSI_SignalCloseLevel = 36;
     RSI_PriceLimitMethod = 0;
-    RSI_PriceLimitLevel = 0;
+    RSI_PriceLimitLevel = 2;
     RSI_MaxSpread = 6;
   }
 } stg_rsi_h1;
