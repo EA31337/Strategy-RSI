@@ -86,7 +86,7 @@ class Stg_RSI : public Strategy {
     RSIParams rsi_params(_params.RSI_Period, _params.RSI_Applied_Price);
     rsi_params.SetTf(_tf);
     StgParams sparams(new Trade(_tf, _Symbol), new Indi_RSI(rsi_params), NULL, NULL);
-    sparams.logger.SetLevel(_log_level);
+    sparams.logger.Ptr().SetLevel(_log_level);
     sparams.SetMagicNo(_magic_no > 0 ? _magic_no : rand());
     sparams.SetSignals(_params.RSI_SignalOpenMethod, _params.RSI_SignalOpenLevel, _params.RSI_SignalCloseMethod,
                        _params.RSI_SignalOpenFilterMethod, _params.RSI_SignalOpenBoostMethod,
