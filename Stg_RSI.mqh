@@ -8,14 +8,14 @@ INPUT int RSI_Period = 2;                        // Period
 INPUT ENUM_APPLIED_PRICE RSI_Applied_Price = 3;  // Applied Price
 INPUT int RSI_Shift = 0;                         // Shift
 INPUT int RSI_SignalOpenMethod = 0;              // Signal open method (-63-63)
-INPUT float RSI_SignalOpenLevel = 36;           // Signal open level (-49-49)
+INPUT float RSI_SignalOpenLevel = 36;            // Signal open level (-49-49)
 INPUT int RSI_SignalOpenFilterMethod = 36;       // Signal open filter method (-49-49)
 INPUT int RSI_SignalOpenBoostMethod = 36;        // Signal open boost method (-49-49)
 INPUT int RSI_SignalCloseMethod = 0;             // Signal close method (-63-63)
-INPUT float RSI_SignalCloseLevel = 36;          // Signal close level (-49-49)
+INPUT float RSI_SignalCloseLevel = 36;           // Signal close level (-49-49)
 INPUT int RSI_PriceLimitMethod = 0;              // Price limit method
-INPUT float RSI_PriceLimitLevel = 0;            // Price limit level
-INPUT float RSI_MaxSpread = 0;                  // Max spread to trade (pips)
+INPUT float RSI_PriceLimitLevel = 0;             // Price limit level
+INPUT float RSI_MaxSpread = 0;                   // Max spread to trade (pips)
 
 // Includes.
 #include <EA31337-classes/Indicators/Indi_RSI.mqh>
@@ -27,14 +27,14 @@ struct Stg_RSI_Params : StgParams {
   ENUM_APPLIED_PRICE RSI_Applied_Price;
   int RSI_Shift;
   int RSI_SignalOpenMethod;
-  double RSI_SignalOpenLevel;
+  float RSI_SignalOpenLevel;
   int RSI_SignalOpenFilterMethod;
   int RSI_SignalOpenBoostMethod;
   int RSI_SignalCloseMethod;
-  double RSI_SignalCloseLevel;
+  float RSI_SignalCloseLevel;
   int RSI_PriceLimitMethod;
-  double RSI_PriceLimitLevel;
-  double RSI_MaxSpread;
+  float RSI_PriceLimitLevel;
+  float RSI_MaxSpread;
 
   // Constructor: Set default param values.
   Stg_RSI_Params()
@@ -168,6 +168,6 @@ class Stg_RSI : public Strategy {
       }
       _result += _trail * _direction;
     }
-    return _result;
+    return (float)_result;
   }
 };
