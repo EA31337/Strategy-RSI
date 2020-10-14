@@ -1,0 +1,63 @@
+---
+name: Optimize SignalOpenMethod
+
+# yamllint disable rule:truthy
+on:
+  push:
+    branches:
+      - 'optimize-som'
+      - 'optimize-som-*'
+
+jobs:
+  Compile:
+    defaults:
+      run:
+        shell: powershell
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+        with:
+          path: Include/EA31337-classes
+          repository: EA31337/EA31337-classes
+      - name: Compile for MQL4
+        uses: fx31337/mql-compile-action@master
+        with:
+          path: Stg_RSI.mq4
+          include: .
+          mt-version: 5.0.0.2361
+          verbose: true
+      - name: Compile for MQL5
+        uses: fx31337/mql-compile-action@master
+        with:
+          path: Stg_RSI.mq5
+          include: .
+          mt-version: 5.0.0.2515
+          verbose: true
+      - name: List compiled files
+        run: '(Get-ChildItem -Recurse -Path . -Include *.ex[45]).fullname'
+      - run: Get-Location
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: files
+          path: '*.ex?'
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: files
+          path: '_optimize/*.set'
+  Optimize:
+    needs: Compile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: files
+      - uses: ea31337/mql-tester-action@master
+        with:
+          BtMonths: 1
+          BtYears: 2019
+          OptOptimize: true
+          SetFile: /github/workspace/SignalOpenMethod.set
+          TestExpert: "Stg_RSI"
