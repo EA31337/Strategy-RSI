@@ -59,6 +59,7 @@ jobs:
           BtMonths: 1
           BtYears: 2019
           OptOptimize: true
+          OptVerbose: true
           SetFile: /github/workspace/SignalCloseLevel.set
           TestExpert: "Stg_RSI"
           TestPeriod: M1

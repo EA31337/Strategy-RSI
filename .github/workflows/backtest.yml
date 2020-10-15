@@ -65,5 +65,6 @@ jobs:
         with:
           BtMonths: ${{ matrix.month }}
           BtYears: ${{ matrix.year }}
+          OptVerbose: true
           TestExpert: "Stg_RSI"
           TestPeriod: M1
