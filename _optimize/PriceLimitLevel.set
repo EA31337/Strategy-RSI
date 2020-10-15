@@ -1,0 +1,6 @@
+; Optimize price limit level param.
+RSI_PriceLimitLevel,F=1
+RSI_PriceLimitLevel,1=10
+RSI_PriceLimitLevel,2=5
+RSI_PriceLimitLevel,3=40
+RSI_TickFilterMethod=1
