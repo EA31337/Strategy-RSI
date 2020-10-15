@@ -1,6 +1,6 @@
 ; Optimize signal open level param.
-RSI_SignalOpenMethod,F=1
-RSI_SignalOpenMethod,1=10
-RSI_SignalOpenMethod,2=5
-RSI_SignalOpenMethod,3=40
+RSI_SignalOpenLevel,F=1
+RSI_SignalOpenLevel,1=10
+RSI_SignalOpenLevel,2=5
+RSI_SignalOpenLevel,3=40
 RSI_TickFilterMethod=1
