@@ -1,4 +1,4 @@
-; Optimize signal open method param.
+; Optimize signal open level param.
 RSI_SignalOpenMethod,F=1
 RSI_SignalOpenMethod,1=10
 RSI_SignalOpenMethod,2=5
