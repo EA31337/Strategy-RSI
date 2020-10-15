@@ -63,6 +63,7 @@ jobs:
       - name: Run strategy
         uses: ea31337/mql-tester-action@master
         with:
-          TestExpert: "Stg_RSI"
           BtMonths: ${{ matrix.month }}
           BtYears: ${{ matrix.year }}
+          TestExpert: "Stg_RSI"
+          TestPeriod: M1

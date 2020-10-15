@@ -61,3 +61,4 @@ jobs:
           OptOptimize: true
           SetFile: /github/workspace/SignalOpenLevel.set
           TestExpert: "Stg_RSI"
+          TestPeriod: M1
