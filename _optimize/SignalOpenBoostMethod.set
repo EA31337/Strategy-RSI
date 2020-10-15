@@ -1,6 +1,6 @@
 ; Optimize signal open boost method param.
-SignalOpenBoostMethod,F=1
-SignalOpenBoostMethod,1=1
-SignalOpenBoostMethod,2=1
-SignalOpenBoostMethod,3=8
+RSI_SignalOpenBoostMethod,F=1
+RSI_SignalOpenBoostMethod,1=1
+RSI_SignalOpenBoostMethod,2=1
+RSI_SignalOpenBoostMethod,3=8
 RSI_TickFilterMethod=1
