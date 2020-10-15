@@ -1,0 +1,6 @@
+; Optimize max spread param.
+RSI_MaxSpread,F=1
+RSI_MaxSpread,1=10
+RSI_MaxSpread,2=10
+RSI_MaxSpread,3=40
+RSI_TickFilterMethod=1
