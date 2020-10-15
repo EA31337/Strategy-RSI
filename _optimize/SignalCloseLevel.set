@@ -1,0 +1,6 @@
+; Optimize signal close level param.
+RSI_SignalCloseLevel,F=1
+RSI_SignalCloseLevel,1=10
+RSI_SignalCloseLevel,2=5
+RSI_SignalCloseLevel,3=40
+RSI_TickFilterMethod=1
