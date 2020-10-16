@@ -1,20 +1,12 @@
 ---
-name: Backtest
+name: Optimize TickFilterMethod
 
-# yamllint disable-line rule:truthy
+# yamllint disable rule:truthy
 on:
-  pull_request:
-    branches:
-      - 'master'
-      - 'dev*'
-    paths-ignore:
-      - '*.md'
   push:
     branches:
-      - 'master'
-      - 'dev*'
-    paths-ignore:
-      - '*.md'
+      - 'optimize-tfm'
+      - 'optimize-tfm-*'
 
 jobs:
   Compile:
@@ -44,33 +36,35 @@ jobs:
           verbose: true
       - name: List compiled files
         run: '(Get-ChildItem -Recurse -Path . -Include *.ex[45]).fullname'
+      - run: Get-Location
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: files
           path: '*.ex?'
-  Test:
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: files
+          path: '_optimize/*.set'
+  Optimize:
     needs: Compile
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        month: [1]
-        year: [2018, 2019]
     steps:
       - uses: actions/download-artifact@v2
         with:
           name: files
-      - name: Run strategy
-        uses: ea31337/mql-tester-action@master
+      - uses: ea31337/mql-tester-action@master
         with:
           BtDest: ${{ github.workspace }}/_results
-          BtMonths: ${{ matrix.month }}
-          BtYears: ${{ matrix.year }}
+          BtMonths: 1
+          BtYears: 2019
+          OptOptimize: true
           OptFormatBrief: true
           OptVerbose: true
+          SetFile: ${{ github.workspace }}/TickFilterMethod.set
           TestExpert: "Stg_RSI"
           TestPeriod: M1
-          TestReportName: Report-${{ matrix.year }}-${{ matrix.month }}
       - name: Upload results
         uses: actions/upload-artifact@v2
         with:

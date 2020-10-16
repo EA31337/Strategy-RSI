@@ -16,20 +16,20 @@ INPUT int RSI_SignalOpenBoostMethod = 36;   // Signal open boost method (-49-49)
 INPUT int RSI_SignalCloseMethod = 0;        // Signal close method (-63-63)
 INPUT float RSI_SignalCloseLevel = 36;      // Signal close level (-49-49)
 INPUT int RSI_PriceLimitMethod = 0;         // Price limit method
-INPUT float RSI_PriceLimitLevel = 0;        // Price limit level
+INPUT float RSI_PriceLimitLevel = 15;       // Price limit level
 INPUT int RSI_TickFilterMethod = 0;         // Tick filter method
 INPUT float RSI_MaxSpread = 0;              // Max spread to trade (pips)
 INPUT int RSI_Shift = 0;                    // Shift
 INPUT string __RSI_Indi_RSI_Parameters__ =
     "-- RSI strategy: RSI indicator params --";       // >>> RSI strategy: RSI indicator <<<
-INPUT int Indi_RSI_Period = 2;                        // Period
+INPUT int RSI_Indi_RSI_Period = 2;                    // Period
 INPUT ENUM_APPLIED_PRICE Indi_RSI_Applied_Price = 3;  // Applied Price
 
 // Structs.
 
 // Defines struct with default user indicator values.
 struct Indi_RSI_Params_Defaults : RSIParams {
-  Indi_RSI_Params_Defaults() : RSIParams(::Indi_RSI_Period, ::Indi_RSI_Applied_Price) {}
+  Indi_RSI_Params_Defaults() : RSIParams(::RSI_Indi_RSI_Period, ::Indi_RSI_Applied_Price) {}
 } indi_rsi_defaults;
 
 // Defines struct to store indicator parameter values.

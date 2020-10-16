@@ -1,0 +1,6 @@
+; Optimize strategy indicator's RSI period param.
+RSI_Indi_RSI_Period,F=1
+RSI_Indi_RSI_Period,1=4
+RSI_Indi_RSI_Period,2=4
+RSI_Indi_RSI_Period,3=24
+RSI_TickFilterMethod=1

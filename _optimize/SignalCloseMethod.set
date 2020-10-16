@@ -1,0 +1,6 @@
+; Optimize signal close method param.
+RSI_SignalCloseMethod,F=1
+RSI_SignalCloseMethod,1=-63
+RSI_SignalCloseMethod,2=3
+RSI_SignalCloseMethod,3=63
+RSI_TickFilterMethod=1

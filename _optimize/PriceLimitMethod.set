@@ -1,0 +1,6 @@
+; Optimize price limit method param.
+RSI_PriceLimitMethod,F=1
+RSI_PriceLimitMethod,1=0
+RSI_PriceLimitMethod,2=1
+RSI_PriceLimitMethod,3=4
+RSI_TickFilterMethod=1
