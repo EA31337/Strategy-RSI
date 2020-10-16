@@ -1,5 +1,6 @@
 ; Optimize tick filter method param.
-RSI_TickFilterMethod,F=1
+RSI_SignalOpenFilterMethod=1
 RSI_TickFilterMethod,1=1
 RSI_TickFilterMethod,2=1
 RSI_TickFilterMethod,3=32
+RSI_TickFilterMethod,F=1

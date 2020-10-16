@@ -1,6 +1,6 @@
 ; Optimize signal open filter method param.
-RSI_SignalOpenFilterMethod,F=1
 RSI_SignalOpenFilterMethod,1=0
 RSI_SignalOpenFilterMethod,2=9
 RSI_SignalOpenFilterMethod,3=49
+RSI_SignalOpenFilterMethod,F=1
 RSI_TickFilterMethod=1
