@@ -61,7 +61,7 @@ jobs:
         with:
           name: files
       - name: Run strategy
-        uses: ea31337/mql-tester-action@dev
+        uses: ea31337/mql-tester-action@master
         with:
           BtDest: ${{ github.workspace }}/_results
           BtMonths: ${{ matrix.month }}
@@ -69,6 +69,7 @@ jobs:
           OptVerbose: true
           TestExpert: "Stg_RSI"
           TestPeriod: M1
+          TestReportName: Report-${{ matrix.year }}-${{ matrix.month }}
       - name: Upload results
         uses: actions/upload-artifact@v2
         with:

@@ -56,10 +56,16 @@ jobs:
           name: files
       - uses: ea31337/mql-tester-action@master
         with:
+          BtDest: ${{ github.workspace }}/_results
           BtMonths: 1
           BtYears: 2019
           OptOptimize: true
           OptVerbose: true
-          SetFile: /github/workspace/SignalOpenMethod.set
+          SetFile: ${{ github.workspace }}/Indi_RSI_Period.set
           TestExpert: "Stg_RSI"
           TestPeriod: M1
+      - name: Upload results
+        uses: actions/upload-artifact@v2
+        with:
+          name: results
+          path: ${{ github.workspace }}/_results/*.*
