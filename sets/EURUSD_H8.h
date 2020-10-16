@@ -20,7 +20,7 @@ struct Stg_RSI_Params_H8 : StgParams {
     signal_close_method = 0;
     signal_close_level = 0;
     price_limit_method = 0;
-    price_limit_level = 2;
+    price_limit_level = 15;
     tick_filter_method = 1;
     max_spread = 0;
   }
