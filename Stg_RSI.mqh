@@ -22,14 +22,14 @@ INPUT float RSI_MaxSpread = 0;              // Max spread to trade (pips)
 INPUT int RSI_Shift = 0;                    // Shift
 INPUT string __RSI_Indi_RSI_Parameters__ =
     "-- RSI strategy: RSI indicator params --";       // >>> RSI strategy: RSI indicator <<<
-INPUT int Indi_RSI_Period = 2;                        // Period
+INPUT int RSI_Indi_RSI_Period = 2;                    // Period
 INPUT ENUM_APPLIED_PRICE Indi_RSI_Applied_Price = 3;  // Applied Price
 
 // Structs.
 
 // Defines struct with default user indicator values.
 struct Indi_RSI_Params_Defaults : RSIParams {
-  Indi_RSI_Params_Defaults() : RSIParams(::Indi_RSI_Period, ::Indi_RSI_Applied_Price) {}
+  Indi_RSI_Params_Defaults() : RSIParams(::RSI_Indi_RSI_Period, ::Indi_RSI_Applied_Price) {}
 } indi_rsi_defaults;
 
 // Defines struct to store indicator parameter values.
