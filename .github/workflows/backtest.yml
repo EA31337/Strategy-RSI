@@ -66,6 +66,7 @@ jobs:
           BtDest: ${{ github.workspace }}/_results
           BtMonths: ${{ matrix.month }}
           BtYears: ${{ matrix.year }}
+          OptFormatBrief: true
           OptVerbose: true
           TestExpert: "Stg_RSI"
           TestPeriod: M1

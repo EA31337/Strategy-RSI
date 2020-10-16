@@ -60,6 +60,7 @@ jobs:
           BtMonths: 1
           BtYears: 2019
           OptOptimize: true
+          OptFormatBrief: true
           OptVerbose: true
           SetFile: ${{ github.workspace }}/Indi_RSI_Period.set
           TestExpert: "Stg_RSI"

@@ -60,8 +60,9 @@ jobs:
           BtMonths: 1
           BtYears: 2019
           OptOptimize: true
+          OptFormatBrief: true
           OptVerbose: true
-          SetFile: ${{ github.workspace }}/Indi_RSI_Period.set
+          SetFile: ${{ github.workspace }}/TickFilterMethod.set
           TestExpert: "Stg_RSI"
           TestPeriod: M1
       - name: Upload results
