@@ -1,6 +1,6 @@
-[![Edit][gitpod-image]][gitpod-link]
-
 # Strategy RSI
+
+[![Edit][gitpod-image]][gitpod-link]
 
 Strategy based on the Relative Strength Index indicator.
 

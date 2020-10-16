@@ -4,12 +4,16 @@ FROM ea31337/ea-tester:dev as ea-tester
 FROM gitpod/workspace-full as gitpod
 COPY --from=ea-tester --chown=gitpod:sudo /opt /opt
 
-# Environment variables.
+# Specifies environment variables.
 ENV BT_DEST /opt/results
 ENV PATH $PATH:/opt/scripts:/opt/scripts/py
 
-# Run provision script.
+# Runs provision script as root.
+USER root
 RUN provision.sh
 
-# Modify shell startup scripts.
+# Uses gitpod by default.
+USER gitpod
+
+# Modifies shell startup scripts.
 RUN echo source /opt/scripts/.funcs.cmds.inc.sh >> ~/.bashrc
