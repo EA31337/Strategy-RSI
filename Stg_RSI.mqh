@@ -95,6 +95,20 @@ class Stg_RSI : public Strategy {
     return _strat;
   }
 
+  void OnInit() {
+    bool _result = false;
+  }
+
+  void OnOrderOpen(Order &_order) {
+    bool _result = false;
+    Print(_order.ToString());
+  }
+
+  Task *Tasks() {
+    Task _tasks;
+    return &_tasks;
+  }
+
   /**
    * Check strategy's opening signal.
    */
