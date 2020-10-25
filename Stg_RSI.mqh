@@ -96,12 +96,20 @@ class Stg_RSI : public Strategy {
   }
 
   void OnInit() {
-    bool _result = false;
+    Print("OnInit");
   }
 
   void OnOrderOpen(Order &_order) {
     bool _result = false;
     Print(_order.ToString());
+  }
+
+  void OnPeriod(unsigned short _periods) {
+    Indi_RSI *_indi = Data();
+    if ((_periods & DATETIME_HOUR) != 0) {
+      // Print RSI values every hour.
+      Print(GetName(), "@", EnumToString(GetTf()), ": ", _indi.ToString());
+    }
   }
 
   Task *Tasks() {
