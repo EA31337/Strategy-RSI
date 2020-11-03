@@ -20,6 +20,7 @@ INPUT float RSI_PriceLimitLevel = 15;       // Price limit level
 INPUT int RSI_TickFilterMethod = 0;         // Tick filter method
 INPUT float RSI_MaxSpread = 0;              // Max spread to trade (pips)
 INPUT int RSI_Shift = 0;                    // Shift
+INPUT int RSI_OrderCloseTime = 60;          // Order close time in mins (>0) or bars (<0)
 INPUT string __RSI_Indi_RSI_Parameters__ =
     "-- RSI strategy: RSI indicator params --";       // >>> RSI strategy: RSI indicator <<<
 INPUT int RSI_Indi_RSI_Period = 2;                    // Period
@@ -43,7 +44,7 @@ struct Stg_RSI_Params_Defaults : StgParams {
   Stg_RSI_Params_Defaults()
       : StgParams(::RSI_SignalOpenMethod, ::RSI_SignalOpenFilterMethod, ::RSI_SignalOpenLevel,
                   ::RSI_SignalOpenBoostMethod, ::RSI_SignalCloseMethod, ::RSI_SignalCloseLevel, ::RSI_PriceLimitMethod,
-                  ::RSI_PriceLimitLevel, ::RSI_TickFilterMethod, ::RSI_MaxSpread, ::RSI_Shift) {}
+                  ::RSI_PriceLimitLevel, ::RSI_TickFilterMethod, ::RSI_MaxSpread, ::RSI_Shift, ::RSI_OrderCloseTime) {}
 } stg_rsi_defaults;
 
 // Struct to define strategy parameters to override.
@@ -95,10 +96,6 @@ class Stg_RSI : public Strategy {
     return _strat;
   }
 
-  void OnInit() {
-    Print("OnInit");
-  }
-
   void OnOrderOpen(Order &_order) {
     bool _result = false;
     Print(_order.ToString());
@@ -110,11 +107,6 @@ class Stg_RSI : public Strategy {
       // Print RSI values every hour.
       Print(GetName(), "@", EnumToString(GetTf()), ": ", _indi.ToString());
     }
-  }
-
-  Task *Tasks() {
-    Task _tasks;
-    return &_tasks;
   }
 
   /**
