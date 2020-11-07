@@ -96,19 +96,6 @@ class Stg_RSI : public Strategy {
     return _strat;
   }
 
-  void OnOrderOpen(Order &_order) {
-    bool _result = false;
-    Print(_order.ToString());
-  }
-
-  void OnPeriod(unsigned short _periods) {
-    Indi_RSI *_indi = Data();
-    if ((_periods & DATETIME_HOUR) != 0) {
-      // Print RSI values every hour.
-      Print(GetName(), "@", EnumToString(GetTf()), ": ", _indi.ToString());
-    }
-  }
-
   /**
    * Check strategy's opening signal.
    */
