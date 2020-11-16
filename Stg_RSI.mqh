@@ -99,34 +99,35 @@ class Stg_RSI : public Strategy {
   /**
    * Check strategy's opening signal.
    */
-  bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method, float _level = 0.0) {
+  virtual bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method, float _level = 0.0, int _shift = 0) {
+    int _i = _shift;
     Indi_RSI *_indi = Data();
-    bool _is_valid = _indi[CURR].IsValid() && _indi[PREV].IsValid() && _indi[PPREV].IsValid();
+    bool _is_valid = _indi[_i].IsValid() && _indi[_i + 1].IsValid() && _indi[_i + 2].IsValid();
     bool _result = _is_valid;
     if (_is_valid) {
       switch (_cmd) {
         case ORDER_TYPE_BUY:
-          _result = _indi[CURR].value[0] < (50 - _level);
+          _result = _indi[_i].value[0] < (50 - _level);
           if (_method != 0) {
-            if (METHOD(_method, 0)) _result &= _indi[CURR].value[0] < _indi[PREV].value[0];
-            if (METHOD(_method, 1)) _result &= _indi[PREV].value[0] < _indi[PPREV].value[0];
-            if (METHOD(_method, 2)) _result &= _indi[PREV].value[0] < (50 - _level);
-            if (METHOD(_method, 3)) _result &= _indi[PPREV].value[0] < (50 - _level);
+            if (METHOD(_method, 0)) _result &= _indi[_i].value[0] < _indi[_i + 1].value[0];
+            if (METHOD(_method, 1)) _result &= _indi[_i + 1].value[0] < _indi[_i + 2].value[0];
+            if (METHOD(_method, 2)) _result &= _indi[_i + 1].value[0] < (50 - _level);
+            if (METHOD(_method, 3)) _result &= _indi[_i + 2].value[0] < (50 - _level);
             if (METHOD(_method, 4))
-              _result &= _indi[CURR].value[0] - _indi[PREV].value[0] > _indi[PREV].value[0] - _indi[PPREV].value[0];
-            if (METHOD(_method, 5)) _result &= _indi[PPREV].value[0] > 50;
+              _result &= _indi[_i].value[0] - _indi[_i + 1].value[0] > _indi[_i + 1].value[0] - _indi[_i + 2].value[0];
+            if (METHOD(_method, 5)) _result &= _indi[_i + 2].value[0] > 50;
           }
           break;
         case ORDER_TYPE_SELL:
-          _result = _indi[CURR].value[0] > (50 + _level);
+          _result = _indi[_i].value[0] > (50 + _level);
           if (_method != 0) {
-            if (METHOD(_method, 0)) _result &= _indi[CURR].value[0] > _indi[PREV].value[0];
-            if (METHOD(_method, 1)) _result &= _indi[PREV].value[0] > _indi[PPREV].value[0];
-            if (METHOD(_method, 2)) _result &= _indi[PREV].value[0] > (50 + _level);
-            if (METHOD(_method, 3)) _result &= _indi[PPREV].value[0] > (50 + _level);
+            if (METHOD(_method, 0)) _result &= _indi[_i].value[0] > _indi[_i + 1].value[0];
+            if (METHOD(_method, 1)) _result &= _indi[_i + 1].value[0] > _indi[_i + 2].value[0];
+            if (METHOD(_method, 2)) _result &= _indi[_i + 1].value[0] > (50 + _level);
+            if (METHOD(_method, 3)) _result &= _indi[_i + 2].value[0] > (50 + _level);
             if (METHOD(_method, 4))
-              _result &= _indi[PREV].value[0] - _indi[CURR].value[0] > _indi[PPREV].value[0] - _indi[PREV].value[0];
-            if (METHOD(_method, 5)) _result &= _indi[PPREV].value[0] < 50;
+              _result &= _indi[_i + 1].value[0] - _indi[_i].value[0] > _indi[_i + 2].value[0] - _indi[_i + 1].value[0];
+            if (METHOD(_method, 5)) _result &= _indi[_i + 2].value[0] < 50;
           }
           break;
       }
@@ -147,19 +148,19 @@ class Stg_RSI : public Strategy {
     if (_is_valid) {
       switch (_method) {
         case 0: {
-          int _bar_count0 = (int)_level * (int)_indi.GetPeriod();
+          int _bar_count0 = (int)_level * (int)_indi.GetPeriod() + 1;
           _result = _direction > 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count0))
                                    : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count0));
           break;
         }
         case 1: {
-          int _bar_count1 = (int)_level * (int)_indi.GetPeriod() * 2;
+          int _bar_count1 = (int)_level * (int)_indi.GetPeriod() * 2 + 1;
           _result = _direction > 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count1))
                                    : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count1));
           break;
         }
         case 2: {
-          int _bar_count2 = (int)_level * (int)_indi.GetPeriod();
+          int _bar_count2 = (int)_level * (int)_indi.GetPeriod() + 1;
           _result = _direction > 0 ? _indi.GetPrice(_indi.GetAppliedPrice(), _indi.GetHighest(_bar_count2))
                                    : _indi.GetPrice(_indi.GetAppliedPrice(), _indi.GetLowest(_bar_count2));
           break;
