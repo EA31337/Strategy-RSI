@@ -18,7 +18,7 @@ struct Stg_RSI_Params_H4 : StgParams {
     signal_open_level = 30;
     signal_open_boost = 0;
     signal_close_method = 0;
-    signal_close_level = 0;
+    signal_close_level = 30;
     price_limit_method = 0;
     price_limit_level = 15;
     tick_filter_method = 1;
