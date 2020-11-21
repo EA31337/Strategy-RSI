@@ -46,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: files
-          path: '_optimize/*.set'
+          path: 'sets/optimize/*.set'
   Optimize:
     needs: Compile
     runs-on: ubuntu-latest
