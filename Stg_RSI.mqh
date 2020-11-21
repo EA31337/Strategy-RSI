@@ -97,9 +97,36 @@ class Stg_RSI : public Strategy {
   }
 
   /**
+   * Executes on new time periods.
+   */
+  void OnPeriod(unsigned short _periods = DATETIME_NONE) {
+    if ((_periods & DATETIME_MINUTE) != 0) {
+      // New minute started.
+    }
+    if ((_periods & DATETIME_HOUR) != 0) {
+      // New hour started.
+    }
+    if ((_periods & DATETIME_DAY) != 0) {
+      // New day started.
+      // Clear indicator cached values older than a day.
+      long _prev_day_time = sparams.GetChart().GetBarTime(PERIOD_D1, 1);
+      Data().ExecuteAction(INDI_ACTION_CLEAR_CACHE, _prev_day_time);
+    }
+    if ((_periods & DATETIME_WEEK) != 0) {
+      // New week started.
+    }
+    if ((_periods & DATETIME_MONTH) != 0) {
+      // New month started.
+    }
+    if ((_periods & DATETIME_YEAR) != 0) {
+      // New year started.
+    }
+  }
+
+  /**
    * Check strategy's opening signal.
    */
-  virtual bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method, float _level = 0.0, int _shift = 0) {
+  bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method, float _level = 0.0, int _shift = 0) {
     int _i = _shift;
     Indi_RSI *_indi = Data();
     bool _is_valid = _indi[_i].IsValid() && _indi[_i + 1].IsValid() && _indi[_i + 2].IsValid();
