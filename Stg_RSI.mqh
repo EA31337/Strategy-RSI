@@ -17,9 +17,10 @@ INPUT int RSI_SignalCloseMethod = 0;        // Signal close method (-63-63)
 INPUT float RSI_SignalCloseLevel = 36;      // Signal close level (-49-49)
 INPUT int RSI_PriceLimitMethod = 0;         // Price limit method
 INPUT float RSI_PriceLimitLevel = 15;       // Price limit level
-INPUT int RSI_TickFilterMethod = 0;         // Tick filter method
+INPUT int RSI_TickFilterMethod = 1;         // Tick filter method
 INPUT float RSI_MaxSpread = 0;              // Max spread to trade (pips)
 INPUT int RSI_Shift = 0;                    // Shift
+INPUT int RSI_OrderCloseTime = 60;          // Order close time in mins (>0) or bars (<0)
 INPUT string __RSI_Indi_RSI_Parameters__ =
     "-- RSI strategy: RSI indicator params --";       // >>> RSI strategy: RSI indicator <<<
 INPUT int RSI_Indi_RSI_Period = 2;                    // Period
@@ -43,7 +44,7 @@ struct Stg_RSI_Params_Defaults : StgParams {
   Stg_RSI_Params_Defaults()
       : StgParams(::RSI_SignalOpenMethod, ::RSI_SignalOpenFilterMethod, ::RSI_SignalOpenLevel,
                   ::RSI_SignalOpenBoostMethod, ::RSI_SignalCloseMethod, ::RSI_SignalCloseLevel, ::RSI_PriceLimitMethod,
-                  ::RSI_PriceLimitLevel, ::RSI_TickFilterMethod, ::RSI_MaxSpread, ::RSI_Shift) {}
+                  ::RSI_PriceLimitLevel, ::RSI_TickFilterMethod, ::RSI_MaxSpread, ::RSI_Shift, ::RSI_OrderCloseTime) {}
 } stg_rsi_defaults;
 
 // Struct to define strategy parameters to override.
@@ -60,13 +61,13 @@ struct Stg_RSI_Params : StgParams {
 };
 
 // Loads pair specific param values.
-#include "sets/EURUSD_H1.h"
-#include "sets/EURUSD_H4.h"
-#include "sets/EURUSD_H8.h"
-#include "sets/EURUSD_M1.h"
-#include "sets/EURUSD_M15.h"
-#include "sets/EURUSD_M30.h"
-#include "sets/EURUSD_M5.h"
+#include "config/EURUSD_H1.h"
+#include "config/EURUSD_H4.h"
+#include "config/EURUSD_H8.h"
+#include "config/EURUSD_M1.h"
+#include "config/EURUSD_M15.h"
+#include "config/EURUSD_M30.h"
+#include "config/EURUSD_M5.h"
 
 class Stg_RSI : public Strategy {
  public:
@@ -96,36 +97,64 @@ class Stg_RSI : public Strategy {
   }
 
   /**
+   * Executes on new time periods.
+   */
+  void OnPeriod(unsigned short _periods = DATETIME_NONE) {
+    if ((_periods & DATETIME_MINUTE) != 0) {
+      // New minute started.
+    }
+    if ((_periods & DATETIME_HOUR) != 0) {
+      // New hour started.
+    }
+    if ((_periods & DATETIME_DAY) != 0) {
+      // New day started.
+      // Clear indicator cached values older than a day.
+      long _prev_day_time = sparams.GetChart().GetBarTime(PERIOD_D1, 1);
+      Data().ExecuteAction(INDI_ACTION_CLEAR_CACHE, _prev_day_time);
+    }
+    if ((_periods & DATETIME_WEEK) != 0) {
+      // New week started.
+    }
+    if ((_periods & DATETIME_MONTH) != 0) {
+      // New month started.
+    }
+    if ((_periods & DATETIME_YEAR) != 0) {
+      // New year started.
+    }
+  }
+
+  /**
    * Check strategy's opening signal.
    */
-  bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method, float _level = 0.0) {
+  bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method, float _level = 0.0, int _shift = 0) {
+    int _i = _shift;
     Indi_RSI *_indi = Data();
-    bool _is_valid = _indi[CURR].IsValid() && _indi[PREV].IsValid() && _indi[PPREV].IsValid();
+    bool _is_valid = _indi[_i].IsValid() && _indi[_i + 1].IsValid() && _indi[_i + 2].IsValid();
     bool _result = _is_valid;
     if (_is_valid) {
       switch (_cmd) {
         case ORDER_TYPE_BUY:
-          _result = _indi[CURR].value[0] < (50 - _level);
+          _result = _indi[_i].value[0] < (50 - _level);
           if (_method != 0) {
-            if (METHOD(_method, 0)) _result &= _indi[CURR].value[0] < _indi[PREV].value[0];
-            if (METHOD(_method, 1)) _result &= _indi[PREV].value[0] < _indi[PPREV].value[0];
-            if (METHOD(_method, 2)) _result &= _indi[PREV].value[0] < (50 - _level);
-            if (METHOD(_method, 3)) _result &= _indi[PPREV].value[0] < (50 - _level);
+            if (METHOD(_method, 0)) _result &= _indi[_i].value[0] < _indi[_i + 1].value[0];
+            if (METHOD(_method, 1)) _result &= _indi[_i + 1].value[0] < _indi[_i + 2].value[0];
+            if (METHOD(_method, 2)) _result &= _indi[_i + 1].value[0] < (50 - _level);
+            if (METHOD(_method, 3)) _result &= _indi[_i + 2].value[0] < (50 - _level);
             if (METHOD(_method, 4))
-              _result &= _indi[CURR].value[0] - _indi[PREV].value[0] > _indi[PREV].value[0] - _indi[PPREV].value[0];
-            if (METHOD(_method, 5)) _result &= _indi[PPREV].value[0] > 50;
+              _result &= _indi[_i].value[0] - _indi[_i + 1].value[0] > _indi[_i + 1].value[0] - _indi[_i + 2].value[0];
+            if (METHOD(_method, 5)) _result &= _indi[_i + 2].value[0] > 50;
           }
           break;
         case ORDER_TYPE_SELL:
-          _result = _indi[CURR].value[0] > (50 + _level);
+          _result = _indi[_i].value[0] > (50 + _level);
           if (_method != 0) {
-            if (METHOD(_method, 0)) _result &= _indi[CURR].value[0] > _indi[PREV].value[0];
-            if (METHOD(_method, 1)) _result &= _indi[PREV].value[0] > _indi[PPREV].value[0];
-            if (METHOD(_method, 2)) _result &= _indi[PREV].value[0] > (50 + _level);
-            if (METHOD(_method, 3)) _result &= _indi[PPREV].value[0] > (50 + _level);
+            if (METHOD(_method, 0)) _result &= _indi[_i].value[0] > _indi[_i + 1].value[0];
+            if (METHOD(_method, 1)) _result &= _indi[_i + 1].value[0] > _indi[_i + 2].value[0];
+            if (METHOD(_method, 2)) _result &= _indi[_i + 1].value[0] > (50 + _level);
+            if (METHOD(_method, 3)) _result &= _indi[_i + 2].value[0] > (50 + _level);
             if (METHOD(_method, 4))
-              _result &= _indi[PREV].value[0] - _indi[CURR].value[0] > _indi[PPREV].value[0] - _indi[PREV].value[0];
-            if (METHOD(_method, 5)) _result &= _indi[PPREV].value[0] < 50;
+              _result &= _indi[_i + 1].value[0] - _indi[_i].value[0] > _indi[_i + 2].value[0] - _indi[_i + 1].value[0];
+            if (METHOD(_method, 5)) _result &= _indi[_i + 2].value[0] < 50;
           }
           break;
       }
@@ -146,19 +175,19 @@ class Stg_RSI : public Strategy {
     if (_is_valid) {
       switch (_method) {
         case 0: {
-          int _bar_count0 = (int)_level * (int)_indi.GetPeriod();
+          int _bar_count0 = (int)_level * (int)_indi.GetPeriod() + 1;
           _result = _direction > 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count0))
                                    : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count0));
           break;
         }
         case 1: {
-          int _bar_count1 = (int)_level * (int)_indi.GetPeriod() * 2;
+          int _bar_count1 = (int)_level * (int)_indi.GetPeriod() * 2 + 1;
           _result = _direction > 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count1))
                                    : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count1));
           break;
         }
         case 2: {
-          int _bar_count2 = (int)_level * (int)_indi.GetPeriod();
+          int _bar_count2 = (int)_level * (int)_indi.GetPeriod() + 1;
           _result = _direction > 0 ? _indi.GetPrice(_indi.GetAppliedPrice(), _indi.GetHighest(_bar_count2))
                                    : _indi.GetPrice(_indi.GetAppliedPrice(), _indi.GetLowest(_bar_count2));
           break;
