@@ -15,8 +15,8 @@ INPUT int RSI_SignalOpenFilterMethod = 36;  // Signal open filter method (-49-49
 INPUT int RSI_SignalOpenBoostMethod = 36;   // Signal open boost method (-49-49)
 INPUT int RSI_SignalCloseMethod = 0;        // Signal close method (-63-63)
 INPUT float RSI_SignalCloseLevel = 36;      // Signal close level (-49-49)
-INPUT int RSI_PriceLimitMethod = 0;         // Price limit method
-INPUT float RSI_PriceLimitLevel = 15;       // Price limit level
+INPUT int RSI_PriceStopMethod = 0;          // Price stop method
+INPUT float RSI_PriceStopLevel = 15;        // Price stop level
 INPUT int RSI_TickFilterMethod = 1;         // Tick filter method
 INPUT float RSI_MaxSpread = 0;              // Max spread to trade (pips)
 INPUT int RSI_Shift = 0;                    // Shift
@@ -43,8 +43,8 @@ struct Indi_RSI_Params : public RSIParams {
 struct Stg_RSI_Params_Defaults : StgParams {
   Stg_RSI_Params_Defaults()
       : StgParams(::RSI_SignalOpenMethod, ::RSI_SignalOpenFilterMethod, ::RSI_SignalOpenLevel,
-                  ::RSI_SignalOpenBoostMethod, ::RSI_SignalCloseMethod, ::RSI_SignalCloseLevel, ::RSI_PriceLimitMethod,
-                  ::RSI_PriceLimitLevel, ::RSI_TickFilterMethod, ::RSI_MaxSpread, ::RSI_Shift, ::RSI_OrderCloseTime) {}
+                  ::RSI_SignalOpenBoostMethod, ::RSI_SignalCloseMethod, ::RSI_SignalCloseLevel, ::RSI_PriceStopMethod,
+                  ::RSI_PriceStopLevel, ::RSI_TickFilterMethod, ::RSI_MaxSpread, ::RSI_Shift, ::RSI_OrderCloseTime) {}
 } stg_rsi_defaults;
 
 // Struct to define strategy parameters to override.
@@ -163,9 +163,9 @@ class Stg_RSI : public Strategy {
   }
 
   /**
-   * Gets price limit value for profit take or stop loss.
+   * Gets price stop value for profit take or stop loss.
    */
-  float PriceLimit(ENUM_ORDER_TYPE _cmd, ENUM_ORDER_TYPE_VALUE _mode, int _method = 0, float _level = 0.0) {
+  float PriceStop(ENUM_ORDER_TYPE _cmd, ENUM_ORDER_TYPE_VALUE _mode, int _method = 0, float _level = 0.0) {
     Indi_RSI *_indi = Data();
     bool _is_valid = _indi[CURR].IsValid() && _indi[PREV].IsValid() && _indi[PPREV].IsValid();
     double _trail = _level * Market().GetPipSize();

@@ -1,7 +1,7 @@
-; Optimize price limit method param.
-RSI_PriceLimitMethod,1=0
-RSI_PriceLimitMethod,2=1
-RSI_PriceLimitMethod,3=4
-RSI_PriceLimitMethod,F=1
+; Optimize price stop method param.
+RSI_PriceStopMethod,1=0
+RSI_PriceStopMethod,2=1
+RSI_PriceStopMethod,3=4
+RSI_PriceStopMethod,F=1
 RSI_SignalOpenFilterMethod=1
 RSI_TickFilterMethod=1
