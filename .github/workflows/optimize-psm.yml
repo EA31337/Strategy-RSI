@@ -1,5 +1,5 @@
 ---
-name: Optimize PriceLimitMethod
+name: Optimize PriceStopMethod
 
 # yamllint disable rule:truthy
 on:
@@ -62,7 +62,7 @@ jobs:
           OptOptimize: true
           OptFormatBrief: true
           OptVerbose: true
-          SetFile: ${{ github.workspace }}/PriceLimitMethod.set
+          SetFile: ${{ github.workspace }}/PriceStopMethod.set
           TestExpert: "Stg_RSI"
           TestPeriod: M1
       - name: Upload results
