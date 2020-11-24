@@ -44,12 +44,12 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: files
+          name: EA
           path: '*.ex?'
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: files
+          name: sets
           path: 'sets/optimize/*.set'
   Optimize:
     needs: Compile
@@ -61,7 +61,12 @@ jobs:
     steps:
       - uses: actions/download-artifact@v2
         with:
-          name: files
+          name: EA
+          path: EA
+      - uses: actions/download-artifact@v2
+        with:
+          name: sets
+          path: sets
       - uses: ea31337/mql-tester-action@master
         with:
           BtDest: ${{ github.workspace }}/_results
@@ -73,7 +78,7 @@ jobs:
           OptFormatJson: true
           OptOptimize: true
           OptVerbose: true
-          SetFile: ${{ github.workspace }}/Indi_RSI_Period.set
+          SetFile: ${{ github.workspace }}/sets/Indi_RSI_Period.set
           TestExpert: "Stg_RSI"
           TestPeriod: ${{ matrix.tf }}
       - name: Upload result files
@@ -97,9 +102,9 @@ jobs:
       - name: Update config file
         run: |
           set | grep ^RSI
-          ex -u NONE -scwq! -V1 \
-            +"%s/\\<period[^=]\\?=[^0-9]\\?\\zs[^;$]\\+/${param_name}/" \
-            ${{ matrix.pair }}_${{ matrix.tf }}.h
+          ex -u NONE -V1 \
+            +"%s/\\<period[^=]\\?=[^0-9]\\?\\zs[^;$]\\+/${!param_name}/" \
+            -scwq! ./config/${{ matrix.pair }}_${{ matrix.tf }}.h
       - name: Upload updated config file
         uses: actions/upload-artifact@v2
         with:
