@@ -67,25 +67,31 @@ jobs:
       - uses: ea31337/mql-tester-action@master
         with:
           BtDest: ${{ github.workspace }}/_results
-          BtDays: 1-14
+          BtDays: 1-8
           BtMonths: 1
           BtPair: ${{ matrix.pair }}
           BtYears: 2019
-          OptOptimize: true
           OptFormatBrief: true
+          OptFormatJson: true
+          OptOptimize: true
           OptVerbose: true
           SetFile: ${{ github.workspace }}/Indi_RSI_Period.set
           TestExpert: "Stg_RSI"
           TestPeriod: ${{ matrix.tf }}
-      - name: Print value
-        run: jq -r '(."Result params"/";")[0]' ${{ github.workspace }}/_results/*.json
-      - name: Upload config files
-        uses: actions/upload-artifact@v2
-        with:
-          name: config
-          path: ${{ github.workspace }}/config/*.h
       - name: Upload result files
         uses: actions/upload-artifact@v2
         with:
           name: results
           path: ${{ github.workspace }}/_results/*.*
+      - name: Process results
+        run: |
+          pwd
+          jq . _results/*.json
+          jq -r '(."Result params"/";")[0]' _results/*.json
+          jq -r '(."Result params"/";")[0]' _results/*.json >> $GITHUB_ENV
+      - run: set | grep ^RSI
+      - name: Upload updated config files
+        uses: actions/upload-artifact@v2
+        with:
+          name: config
+          path: ${{ github.workspace }}/config/*.h
