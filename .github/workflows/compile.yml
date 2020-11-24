@@ -9,12 +9,14 @@ on:
       - 'dev*'
     paths-ignore:
       - '*.md'
+      - '.git*'
   push:
     branches:
       - 'master'
       - 'dev*'
     paths-ignore:
       - '*.md'
+      - '.git*'
 
 jobs:
   Compile:
