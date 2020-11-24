@@ -52,7 +52,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: files
+          name: EA
           path: '*.ex?'
   Test:
     needs: Compile
@@ -64,7 +64,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v2
         with:
-          name: files
+          name: EA
       - name: Run strategy
         uses: ea31337/mql-tester-action@master
         with:

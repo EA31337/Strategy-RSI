@@ -52,5 +52,5 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: files
+          name: EA
           path: '*.ex?'
