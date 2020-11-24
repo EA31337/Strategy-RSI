@@ -50,6 +50,10 @@ jobs:
   Optimize:
     needs: Compile
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        pair: [EURUSD]
+        tf: [M1]
     steps:
       - uses: actions/download-artifact@v2
         with:
@@ -58,14 +62,20 @@ jobs:
         with:
           BtDest: ${{ github.workspace }}/_results
           BtMonths: 1
+          BtPair: ${{ matrix.pair }}
           BtYears: 2019
           OptOptimize: true
           OptFormatBrief: true
           OptVerbose: true
           SetFile: ${{ github.workspace }}/Indi_RSI_Period.set
           TestExpert: "Stg_RSI"
-          TestPeriod: M1
-      - name: Upload results
+          TestPeriod: ${{ matrix.tf }}
+      - name: Upload config files
+        uses: actions/upload-artifact@v2
+        with:
+          name: config
+          path: ${{ github.workspace }}/config/*.h
+      - name: Upload result files
         uses: actions/upload-artifact@v2
         with:
           name: results
