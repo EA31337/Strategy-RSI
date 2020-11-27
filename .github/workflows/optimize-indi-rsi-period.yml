@@ -70,7 +70,6 @@ jobs:
       - uses: ea31337/mql-tester-action@master
         with:
           BtDest: ${{ github.workspace }}/_results
-          BtDays: 1-8
           BtMonths: 1
           BtPair: ${{ matrix.pair }}
           BtYears: 2019

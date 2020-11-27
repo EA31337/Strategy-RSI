@@ -77,7 +77,7 @@ jobs:
           OptFormatJson: true
           OptOptimize: true
           OptVerbose: true
-          SetFile: ${{ github.workspace }}/SignalCloseLevel.set
+          SetFile: ${{ github.workspace }}/sets/SignalCloseLevel.set
           TestExpert: "Stg_RSI"
           TestPeriod: ${{ matrix.tf }}
       - name: Upload result files
