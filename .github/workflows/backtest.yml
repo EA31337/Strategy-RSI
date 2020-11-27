@@ -66,7 +66,7 @@ jobs:
         with:
           name: EA
       - name: Run strategy
-        uses: ea31337/mql-tester-action@master
+        uses: ea31337/mql-tester-action@dev
         with:
           BtDest: ${{ github.workspace }}/_results
           BtMonths: ${{ matrix.month }}
