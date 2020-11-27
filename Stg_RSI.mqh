@@ -8,23 +8,23 @@
 #include <EA31337-classes/Strategy.mqh>
 
 // User input params.
-INPUT float RSI_LotSize = 0;                // Lot size
-INPUT int RSI_SignalOpenMethod = 0;         // Signal open method (-63-63)
-INPUT float RSI_SignalOpenLevel = 36;       // Signal open level (-49-49)
-INPUT int RSI_SignalOpenFilterMethod = 1;   // Signal open filter method (0-31)
-INPUT int RSI_SignalOpenBoostMethod = 0;    // Signal open boost method
-INPUT int RSI_SignalCloseMethod = 0;        // Signal close method (-63-63)
-INPUT float RSI_SignalCloseLevel = 36;      // Signal close level (-49-49)
-INPUT int RSI_PriceStopMethod = 0;          // Price stop method
-INPUT float RSI_PriceStopLevel = 15;        // Price stop level
-INPUT int RSI_TickFilterMethod = 1;         // Tick filter method
-INPUT float RSI_MaxSpread = 0;              // Max spread to trade (pips)
-INPUT int RSI_Shift = 0;                    // Shift
-INPUT int RSI_OrderCloseTime = 60;          // Order close time in mins (>0) or bars (<0)
+INPUT float RSI_LotSize = 0;               // Lot size
+INPUT int RSI_SignalOpenMethod = 0;        // Signal open method (-63-63)
+INPUT float RSI_SignalOpenLevel = 36;      // Signal open level (-49-49)
+INPUT int RSI_SignalOpenFilterMethod = 1;  // Signal open filter method (0-31)
+INPUT int RSI_SignalOpenBoostMethod = 0;   // Signal open boost method
+INPUT int RSI_SignalCloseMethod = 0;       // Signal close method (-63-63)
+INPUT float RSI_SignalCloseLevel = 36;     // Signal close level (-49-49)
+INPUT int RSI_PriceStopMethod = 0;         // Price stop method
+INPUT float RSI_PriceStopLevel = 15;       // Price stop level
+INPUT int RSI_TickFilterMethod = 1;        // Tick filter method
+INPUT float RSI_MaxSpread = 0;             // Max spread to trade (pips)
+INPUT int RSI_Shift = 0;                   // Shift
+INPUT int RSI_OrderCloseTime = -10;        // Order close time in mins (>0) or bars (<0)
 INPUT string __RSI_Indi_RSI_Parameters__ =
-    "-- RSI strategy: RSI indicator params --";       // >>> RSI strategy: RSI indicator <<<
-INPUT int RSI_Indi_RSI_Period = 2;                    // Period
-INPUT ENUM_APPLIED_PRICE Indi_RSI_Applied_Price = 3;  // Applied Price
+    "-- RSI strategy: RSI indicator params --";                           // >>> RSI strategy: RSI indicator <<<
+INPUT int RSI_Indi_RSI_Period = 12;                                       // Period
+INPUT ENUM_APPLIED_PRICE Indi_RSI_Applied_Price = (ENUM_APPLIED_PRICE)0;  // Applied Price
 
 // Structs.
 

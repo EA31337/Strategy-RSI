@@ -6,7 +6,7 @@
 // Defines indicator's parameter values for the given pair symbol and timeframe.
 struct Indi_RSI_Params_M5 : Indi_RSI_Params {
   Indi_RSI_Params_M5() : Indi_RSI_Params(indi_rsi_defaults, PERIOD_M5) {
-    applied_price = PRICE_TYPICAL;
+    applied_price = 0;
     period = 12;
     shift = 0;
   }
