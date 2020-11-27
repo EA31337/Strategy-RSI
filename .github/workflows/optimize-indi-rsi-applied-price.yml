@@ -95,14 +95,14 @@ jobs:
           jq -r '((."Result params"/";")[0]/"=")[0]'
           jq -r '(."Result params"/";")[0]' _results/*.json \
             >> $GITHUB_ENV
-          jq -r '"param_name="+((."Result params"/";")[0]/"=")[0]' \
+          jq -r '"pname="+((."Result params"/";")[0]/"=")[0]' \
             _results/*.json >> $GITHUB_ENV
       - uses: actions/checkout@v2
       - name: Update config file
         run: |
           set | grep ^RSI
           ex -u NONE -V1 \
-            +"%s/\\<applied_price[^=]\\?=[^0-9]\\?\\zs[^;$]\\+/${!param_name}/" \
+            +"%s/\\<applied_price[^=]\\?=[^0-9]\\?\\zs[^;$]\\+/${!pname}/" \
             -scwq! ./config/${{ matrix.pair }}_${{ matrix.tf }}.h
       - name: Upload updated config file
         uses: actions/upload-artifact@v2
