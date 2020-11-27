@@ -1,0 +1,111 @@
+---
+name: Optimize Indi_RSI_Applied_Price
+
+# yamllint disable-line rule:truthy
+on:
+  push:
+    branches:
+      - 'optimize-indi-rsi-applied-price'
+      - 'optimize-indi-rsi-applied-price-*'
+
+jobs:
+  Compile:
+    defaults:
+      run:
+        shell: powershell
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+        with:
+          path: Include/EA31337-classes
+          ref: dev
+          repository: EA31337/EA31337-classes
+      - name: Compile for MQL4
+        uses: fx31337/mql-compile-action@master
+        with:
+          include: .
+          init-platform: true
+          mt-version: 5.0.0.2361
+          path: Stg_RSI.mq4
+          verbose: true
+      - name: Copy Math includes
+        run: Copy-Item -Recurse ../MetaTrader/MQL5/Include/Math Include/
+      - name: Compile for MQL5
+        uses: fx31337/mql-compile-action@master
+        with:
+          include: .
+          mt-version: 5.0.0.2515
+          path: Stg_RSI.mq5
+          verbose: true
+      - name: List compiled files
+        run: '(Get-ChildItem -Recurse -Path . -Include *.ex[45]).fullname'
+      - run: Get-Location
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: EA
+          path: '*.ex?'
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: sets
+          path: 'sets/optimize/*.set'
+  Optimize:
+    needs: Compile
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        pair: [EURUSD]
+        tf: [M1]
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: EA
+          path: EA
+      - uses: actions/download-artifact@v2
+        with:
+          name: sets
+          path: sets
+      - uses: ea31337/mql-tester-action@master
+        with:
+          BtDest: ${{ github.workspace }}/_results
+          BtMonths: 1
+          BtPair: ${{ matrix.pair }}
+          BtYears: 2019
+          OptFormatBrief: true
+          OptFormatJson: true
+          OptOptimize: true
+          OptVerbose: true
+          SetFile: ${{ github.workspace }}/sets/Indi_RSI_Applied_Price.set
+          TestExpert: "Stg_RSI"
+          TestPeriod: ${{ matrix.tf }}
+      - name: Upload result files
+        uses: actions/upload-artifact@v2
+        with:
+          name: results
+          path: ./_results/*.*
+      - name: Process results
+        run: |
+          pwd
+          ls
+          jq --version
+          jq . _results/*.json
+          jq -r '(."Result params"/";")[0]' _results/*.json
+          jq -r '((."Result params"/";")[0]/"=")[0]'
+          jq -r '(."Result params"/";")[0]' _results/*.json \
+            >> $GITHUB_ENV
+          jq -r '"param_name="+((."Result params"/";")[0]/"=")[0]' \
+            _results/*.json >> $GITHUB_ENV
+      - uses: actions/checkout@v2
+      - name: Update config file
+        run: |
+          set | grep ^RSI
+          ex -u NONE -V1 \
+            +"%s/\\<applied_price[^=]\\?=[^0-9]\\?\\zs[^;$]\\+/${!param_name}/" \
+            -scwq! ./config/${{ matrix.pair }}_${{ matrix.tf }}.h
+      - name: Upload updated config file
+        uses: actions/upload-artifact@v2
+        with:
+          name: config
+          path: ./config/${{ matrix.pair }}_${{ matrix.tf }}.h
