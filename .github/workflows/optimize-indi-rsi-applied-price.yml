@@ -1,3 +1,4 @@
+# yamllint disable rule:line-length
 ---
 name: Optimize Indi_RSI_Applied_Price
 
@@ -102,7 +103,7 @@ jobs:
         run: |
           set | grep ^RSI
           ex -u NONE -V1 \
-            +"%s/\\<applied_price[^=]\\?=[^0-9]\\?\\zs[^;$]\\+/${!pname}/" \
+            +"%s@\\<applied_price[^=]\\?=\\s\\?[^-.0-9]\\+\\zs[^;$]\\+@${!pname}@" \
             -scwq! ./config/${{ matrix.pair }}_${{ matrix.tf }}.h
       - name: Upload updated config file
         uses: actions/upload-artifact@v2

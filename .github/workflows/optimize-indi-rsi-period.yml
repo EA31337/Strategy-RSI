@@ -102,7 +102,7 @@ jobs:
         run: |
           set | grep ^RSI
           ex -u NONE -V1 \
-            +"%s/\\<period[^=]\\?=[^0-9]\\?\\zs[^;$]\\+/${!pname}/" \
+            +"%s@\\<period[^=]\\?=\\s\\?[^-.0-9]\\+\\zs[^;$]\\+@${!pname}@" \
             -scwq! ./config/${{ matrix.pair }}_${{ matrix.tf }}.h
       - name: Upload updated config file
         uses: actions/upload-artifact@v2
