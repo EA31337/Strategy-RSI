@@ -8,23 +8,23 @@
 #include <EA31337-classes/Strategy.mqh>
 
 // User input params.
-INPUT float RSI_LotSize = 0;                // Lot size
-INPUT int RSI_SignalOpenMethod = 0;         // Signal open method (-63-63)
-INPUT float RSI_SignalOpenLevel = 36;       // Signal open level (-49-49)
-INPUT int RSI_SignalOpenFilterMethod = 36;  // Signal open filter method (-49-49)
-INPUT int RSI_SignalOpenBoostMethod = 36;   // Signal open boost method (-49-49)
-INPUT int RSI_SignalCloseMethod = 0;        // Signal close method (-63-63)
-INPUT float RSI_SignalCloseLevel = 36;      // Signal close level (-49-49)
-INPUT int RSI_PriceStopMethod = 0;          // Price stop method
-INPUT float RSI_PriceStopLevel = 15;        // Price stop level
-INPUT int RSI_TickFilterMethod = 1;         // Tick filter method
-INPUT float RSI_MaxSpread = 0;              // Max spread to trade (pips)
-INPUT int RSI_Shift = 0;                    // Shift
-INPUT int RSI_OrderCloseTime = 60;          // Order close time in mins (>0) or bars (<0)
+INPUT float RSI_LotSize = 0;               // Lot size
+INPUT int RSI_SignalOpenMethod = 0;        // Signal open method (-63-63)
+INPUT float RSI_SignalOpenLevel = 36;      // Signal open level (-49-49)
+INPUT int RSI_SignalOpenFilterMethod = 1;  // Signal open filter method (0-31)
+INPUT int RSI_SignalOpenBoostMethod = 0;   // Signal open boost method
+INPUT int RSI_SignalCloseMethod = 0;       // Signal close method (-63-63)
+INPUT float RSI_SignalCloseLevel = 36;     // Signal close level (-49-49)
+INPUT int RSI_PriceStopMethod = 0;         // Price stop method
+INPUT float RSI_PriceStopLevel = 15;       // Price stop level
+INPUT int RSI_TickFilterMethod = 1;        // Tick filter method
+INPUT float RSI_MaxSpread = 0;             // Max spread to trade (pips)
+INPUT int RSI_Shift = 0;                   // Shift
+INPUT int RSI_OrderCloseTime = -10;        // Order close time in mins (>0) or bars (<0)
 INPUT string __RSI_Indi_RSI_Parameters__ =
-    "-- RSI strategy: RSI indicator params --";       // >>> RSI strategy: RSI indicator <<<
-INPUT int RSI_Indi_RSI_Period = 2;                    // Period
-INPUT ENUM_APPLIED_PRICE Indi_RSI_Applied_Price = 3;  // Applied Price
+    "-- RSI strategy: RSI indicator params --";                           // >>> RSI strategy: RSI indicator <<<
+INPUT int RSI_Indi_RSI_Period = 12;                                       // Period
+INPUT ENUM_APPLIED_PRICE Indi_RSI_Applied_Price = (ENUM_APPLIED_PRICE)0;  // Applied Price
 
 // Structs.
 
@@ -36,6 +36,7 @@ struct Indi_RSI_Params_Defaults : RSIParams {
 // Defines struct to store indicator parameter values.
 struct Indi_RSI_Params : public RSIParams {
   // Struct constructors.
+  void Indi_RSI_Params(ENUM_TIMEFRAMES _tf = PERIOD_CURRENT) : RSIParams(_tf) {}
   void Indi_RSI_Params(RSIParams &_params, ENUM_TIMEFRAMES _tf) : RSIParams(_params, _tf) {}
 };
 
@@ -82,6 +83,12 @@ class Stg_RSI : public Strategy {
                                      indi_rsi_h1, indi_rsi_h4, indi_rsi_h8);
       SetParamsByTf<StgParams>(_stg_params, _tf, stg_rsi_m1, stg_rsi_m5, stg_rsi_m15, stg_rsi_m30, stg_rsi_h1,
                                stg_rsi_h4, stg_rsi_h8);
+      // Print param values.
+      // SerializerConverter _stub_ip = Serializer::MakeStubObject<DictStruct<int, Indi_RSI_Params>>();
+      // SerializerConverter _stub_sp = Serializer::MakeStubObject<DictStruct<int, StgParams>>();
+      // @fixme: Why not FromStruct()?
+      // Print(SerializerConverter::FromObject(_indi_params).ToString<SerializerCsv>(SERIALIZER_FLAG_SKIP_HIDDEN, &_stub_ip));
+      // Print(SerializerConverter::FromObject(_stg_params).ToString<SerializerCsv>(SERIALIZER_FLAG_SKIP_HIDDEN, &_stub_sp));
     }
     // Initialize indicator.
     RSIParams rsi_params(_indi_params);
@@ -126,7 +133,7 @@ class Stg_RSI : public Strategy {
   /**
    * Check strategy's opening signal.
    */
-  bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method, float _level = 0.0, int _shift = 0) {
+  bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method, float _level = 0.0f, int _shift = 0) {
     int _i = _shift;
     Indi_RSI *_indi = Data();
     bool _is_valid = _indi[_i].IsValid() && _indi[_i + 1].IsValid() && _indi[_i + 2].IsValid();
@@ -174,25 +181,25 @@ class Stg_RSI : public Strategy {
     double _result = _default_value;
     if (_is_valid) {
       switch (_method) {
-        case 0: {
+        case 1: {
           int _bar_count0 = (int)_level * (int)_indi.GetPeriod() + 1;
           _result = _direction > 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count0))
                                    : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count0));
           break;
         }
-        case 1: {
+        case 2: {
           int _bar_count1 = (int)_level * (int)_indi.GetPeriod() * 2 + 1;
           _result = _direction > 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count1))
                                    : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count1));
           break;
         }
-        case 2: {
+        case 3: {
           int _bar_count2 = (int)_level * (int)_indi.GetPeriod() + 1;
           _result = _direction > 0 ? _indi.GetPrice(_indi.GetAppliedPrice(), _indi.GetHighest(_bar_count2))
                                    : _indi.GetPrice(_indi.GetAppliedPrice(), _indi.GetLowest(_bar_count2));
           break;
         }
-        case 3: {
+        case 4: {
           int _bar_count3 = (int)_level * (int)_indi.GetPeriod() * 2;
           _result = _direction > 0 ? _indi.GetPrice(_indi.GetAppliedPrice(), _indi.GetHighest(_bar_count3))
                                    : _indi.GetPrice(_indi.GetAppliedPrice(), _indi.GetLowest(_bar_count3));
