@@ -36,6 +36,7 @@ struct Indi_RSI_Params_Defaults : RSIParams {
 // Defines struct to store indicator parameter values.
 struct Indi_RSI_Params : public RSIParams {
   // Struct constructors.
+  void Indi_RSI_Params(ENUM_TIMEFRAMES _tf = PERIOD_CURRENT) : RSIParams(_tf) {}
   void Indi_RSI_Params(RSIParams &_params, ENUM_TIMEFRAMES _tf) : RSIParams(_params, _tf) {}
 };
 
@@ -82,6 +83,12 @@ class Stg_RSI : public Strategy {
                                      indi_rsi_h1, indi_rsi_h4, indi_rsi_h8);
       SetParamsByTf<StgParams>(_stg_params, _tf, stg_rsi_m1, stg_rsi_m5, stg_rsi_m15, stg_rsi_m30, stg_rsi_h1,
                                stg_rsi_h4, stg_rsi_h8);
+      // Print param values.
+      // SerializerConverter _stub_ip = Serializer::MakeStubObject<DictStruct<int, Indi_RSI_Params>>();
+      // SerializerConverter _stub_sp = Serializer::MakeStubObject<DictStruct<int, StgParams>>();
+      // @fixme: Why not FromStruct()?
+      // Print(SerializerConverter::FromObject(_indi_params).ToString<SerializerCsv>(SERIALIZER_FLAG_SKIP_HIDDEN, &_stub_ip));
+      // Print(SerializerConverter::FromObject(_stg_params).ToString<SerializerCsv>(SERIALIZER_FLAG_SKIP_HIDDEN, &_stub_sp));
     }
     // Initialize indicator.
     RSIParams rsi_params(_indi_params);
