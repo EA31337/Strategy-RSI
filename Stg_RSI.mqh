@@ -87,8 +87,10 @@ class Stg_RSI : public Strategy {
       // SerializerConverter _stub_ip = Serializer::MakeStubObject<DictStruct<int, Indi_RSI_Params>>();
       // SerializerConverter _stub_sp = Serializer::MakeStubObject<DictStruct<int, StgParams>>();
       // @fixme: Why not FromStruct()?
-      // Print(SerializerConverter::FromObject(_indi_params).ToString<SerializerCsv>(SERIALIZER_FLAG_SKIP_HIDDEN, &_stub_ip));
-      // Print(SerializerConverter::FromObject(_stg_params).ToString<SerializerCsv>(SERIALIZER_FLAG_SKIP_HIDDEN, &_stub_sp));
+      // Print(SerializerConverter::FromObject(_indi_params).ToString<SerializerCsv>(SERIALIZER_FLAG_SKIP_HIDDEN,
+      // &_stub_ip));
+      // Print(SerializerConverter::FromObject(_stg_params).ToString<SerializerCsv>(SERIALIZER_FLAG_SKIP_HIDDEN,
+      // &_stub_sp));
     }
     // Initialize indicator.
     RSIParams rsi_params(_indi_params);
@@ -147,8 +149,7 @@ class Stg_RSI : public Strategy {
             if (METHOD(_method, 1)) _result &= _indi[_i + 1][0] < _indi[_i + 2][0];
             if (METHOD(_method, 2)) _result &= _indi[_i + 1][0] < (50 - _level);
             if (METHOD(_method, 3)) _result &= _indi[_i + 2][0] < (50 - _level);
-            if (METHOD(_method, 4))
-              _result &= _indi[_i][0] - _indi[_i + 1][0] > _indi[_i + 1][0] - _indi[_i + 2][0];
+            if (METHOD(_method, 4)) _result &= _indi[_i][0] - _indi[_i + 1][0] > _indi[_i + 1][0] - _indi[_i + 2][0];
             if (METHOD(_method, 5)) _result &= _indi[_i + 2][0] > 50;
           }
           break;
