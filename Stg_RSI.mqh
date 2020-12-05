@@ -141,27 +141,27 @@ class Stg_RSI : public Strategy {
     if (_is_valid) {
       switch (_cmd) {
         case ORDER_TYPE_BUY:
-          _result = _indi[_i].value[0] < (50 - _level);
+          _result = _indi[_i][0] < (50 - _level);
           if (_method != 0) {
-            if (METHOD(_method, 0)) _result &= _indi[_i].value[0] < _indi[_i + 1].value[0];
-            if (METHOD(_method, 1)) _result &= _indi[_i + 1].value[0] < _indi[_i + 2].value[0];
-            if (METHOD(_method, 2)) _result &= _indi[_i + 1].value[0] < (50 - _level);
-            if (METHOD(_method, 3)) _result &= _indi[_i + 2].value[0] < (50 - _level);
+            if (METHOD(_method, 0)) _result &= _indi[_i][0] < _indi[_i + 1][0];
+            if (METHOD(_method, 1)) _result &= _indi[_i + 1][0] < _indi[_i + 2][0];
+            if (METHOD(_method, 2)) _result &= _indi[_i + 1][0] < (50 - _level);
+            if (METHOD(_method, 3)) _result &= _indi[_i + 2][0] < (50 - _level);
             if (METHOD(_method, 4))
-              _result &= _indi[_i].value[0] - _indi[_i + 1].value[0] > _indi[_i + 1].value[0] - _indi[_i + 2].value[0];
-            if (METHOD(_method, 5)) _result &= _indi[_i + 2].value[0] > 50;
+              _result &= _indi[_i][0] - _indi[_i + 1][0] > _indi[_i + 1][0] - _indi[_i + 2][0];
+            if (METHOD(_method, 5)) _result &= _indi[_i + 2][0] > 50;
           }
           break;
         case ORDER_TYPE_SELL:
-          _result = _indi[_i].value[0] > (50 + _level);
+          _result = _indi[_i][0] > (50 + _level);
           if (_method != 0) {
-            if (METHOD(_method, 0)) _result &= _indi[_i].value[0] > _indi[_i + 1].value[0];
-            if (METHOD(_method, 1)) _result &= _indi[_i + 1].value[0] > _indi[_i + 2].value[0];
-            if (METHOD(_method, 2)) _result &= _indi[_i + 1].value[0] > (50 + _level);
-            if (METHOD(_method, 3)) _result &= _indi[_i + 2].value[0] > (50 + _level);
+            if (METHOD(_method, 0)) _result &= _indi[_i][0] > _indi[_i + 1][0];
+            if (METHOD(_method, 1)) _result &= _indi[_i + 1][0] > _indi[_i + 2][0];
+            if (METHOD(_method, 2)) _result &= _indi[_i + 1][0] > (50 + _level);
+            if (METHOD(_method, 3)) _result &= _indi[_i + 2][0] > (50 + _level);
             if (METHOD(_method, 4))
-              _result &= _indi[_i + 1].value[0] - _indi[_i].value[0] > _indi[_i + 2].value[0] - _indi[_i + 1].value[0];
-            if (METHOD(_method, 5)) _result &= _indi[_i + 2].value[0] < 50;
+              _result &= (_indi[_i + 1][0] - _indi[_i][0]) > (_indi[_i + 2][0] - _indi[_i + 1][0]);
+            if (METHOD(_method, 5)) _result &= _indi[_i + 2][0] < 50;
           }
           break;
       }
