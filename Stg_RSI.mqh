@@ -3,10 +3,6 @@
  * Implements RSI strategy based on Relative Strength Index indicator.
  */
 
-// Includes.
-#include <EA31337-classes/Indicators/Indi_RSI.mqh>
-#include <EA31337-classes/Strategy.mqh>
-
 // User input params.
 INPUT float RSI_LotSize = 0;               // Lot size
 INPUT int RSI_SignalOpenMethod = 0;        // Signal open method (-63-63)
