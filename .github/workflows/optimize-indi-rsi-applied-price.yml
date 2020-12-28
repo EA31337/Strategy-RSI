@@ -73,7 +73,7 @@ jobs:
       - uses: ea31337/mql-tester-action@master
         with:
           BtDest: ${{ github.workspace }}/_results
-          BtDays: 1-10
+          BtDays: 1-6
           BtMonths: 1
           BtPair: ${{ matrix.pair }}
           BtYears: 2019
@@ -140,6 +140,9 @@ jobs:
           RES_TT=$(jq -rs '.[0]|."Total trades"' .results/*.json)
           EOF
         shell: bash -ex {0}
+      - name: Check differences
+        id: git-details
+        run: echo "::set-output name=changed::$(git diff | wc -l)"
       - name: Commit files
         env:
           COMMIT_MSG: >-
@@ -148,6 +151,7 @@ jobs:
           GIT_EMAIL: ${{ github.actor }}@users.noreply.github.com
           GIT_NAME: ${{ github.actor }}
         run: |
+          echo "Lines changed: ${{ steps.git-details.outputs.changed }}"
           echo .results >> .git/info/exclude
           git config --local core.autocrlf false
           git config --local user.email $GIT_EMAIL

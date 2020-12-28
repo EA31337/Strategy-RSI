@@ -140,6 +140,9 @@ jobs:
           RES_TT=$(jq -rs '.[0]|."Total trades"' .results/*.json)
           EOF
         shell: bash -ex {0}
+      - name: Check differences
+        id: git-diff
+        run: git diff
       - name: Commit files
         env:
           COMMIT_MSG: >-
