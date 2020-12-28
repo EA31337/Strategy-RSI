@@ -5,3 +5,4 @@ RSI_SignalOpenBoostMethod,3=8
 RSI_SignalOpenBoostMethod,F=1
 RSI_SignalOpenFilterMethod=1
 RSI_TickFilterMethod=1
+foobar

@@ -5,3 +5,4 @@ RSI_SignalOpenLevel,2=5
 RSI_SignalOpenLevel,3=40
 RSI_SignalOpenLevel,F=1
 RSI_TickFilterMethod=1
+foobar

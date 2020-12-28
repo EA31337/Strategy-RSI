@@ -5,3 +5,5 @@ RSI_PriceStopLevel,3=40
 RSI_PriceStopLevel,F=1
 RSI_SignalOpenFilterMethod=1
 RSI_TickFilterMethod=1
+foo
+foobar

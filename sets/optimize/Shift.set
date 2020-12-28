@@ -5,3 +5,4 @@ RSI_Shift,3=1
 RSI_Shift,F=1
 RSI_SignalOpenFilterMethod=1
 RSI_TickFilterMethod=1
+foobar
