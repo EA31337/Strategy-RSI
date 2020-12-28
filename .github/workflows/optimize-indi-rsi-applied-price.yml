@@ -1,4 +1,3 @@
-# yamllint disable rule:line-length
 ---
 name: Optimize Indi_RSI_Applied_Price
 
@@ -135,12 +134,17 @@ jobs:
           path: .results
       - name: Parse results
         run: |
-          echo RES_DD=$(jq -rs '.[0]|."Drawdown %"' .results/*.json) >> $GITHUB_ENV
-          echo RES_PF=$(jq -rs '.[0]|."Profit factor"' .results/*.json) >> $GITHUB_ENV
-          echo RES_TT=$(jq -rs '.[0]|."Total trades"' .results/*.json) >> $GITHUB_ENV
+          cat << EOF >> $GITHUB_ENV
+          RES_DD=$(jq -rs '.[0]|."Drawdown %"' .results/*.json)
+          RES_PF=$(jq -rs '.[0]|."Profit factor"' .results/*.json)
+          RES_TT=$(jq -rs '.[0]|."Total trades"' .results/*.json)
+          EOF
         shell: bash -ex {0}
       - name: Commit files
         env:
+          COMMIT_MSG: >-
+            ${{ github.workflow }}
+            (pf=${{ env.RES_PF }}; dd=${{ env.RES_DD }}; tt=${{ env.RES_TT }})
           GIT_EMAIL: ${{ github.actor }}@users.noreply.github.com
           GIT_NAME: ${{ github.actor }}
         run: |
@@ -150,7 +154,7 @@ jobs:
           git config --local user.name $GIT_NAME
           git add . && git add --renormalize .
           git pull origin ${{ github.ref }} --autostash --rebase -X ours
-          git commit --allow-empty -am "${{ github.workflow }}"
+          git commit --allow-empty -am "$COMMIT_MSG"
           NO_PAGER=1 git --no-pager diff HEAD^
       - name: Push changes
         env:
