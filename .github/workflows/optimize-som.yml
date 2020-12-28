@@ -60,7 +60,7 @@ jobs:
     strategy:
       matrix:
         pair: [EURUSD]
-        tf: [M1]
+        tf: [M1, M5]
     steps:
       - uses: actions/download-artifact@v2
         with:
@@ -103,9 +103,11 @@ jobs:
             _results/*.json >> $GITHUB_ENV
       - uses: actions/checkout@v2
       - name: Update config file
+        env:
+          KEY: signal_open_method
         run: |
           ex -u NONE -V1 \
-            +"%s/\\<period[^=]\\?=[^0-9]\\?\\zs[^;$]\\+/${!pname}/" \
+            +"%s@\\<$KEY[^=]\\?=\\s\\?[^-.0-9]\\+\\zs[^;$]\\+@${!pname}@" \
             -scwq! ./config/${{ matrix.pair }}_${{ matrix.tf }}.h
       - name: Upload updated config file
         uses: actions/upload-artifact@v2

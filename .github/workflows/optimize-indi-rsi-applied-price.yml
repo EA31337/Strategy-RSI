@@ -61,7 +61,7 @@ jobs:
     strategy:
       matrix:
         pair: [EURUSD]
-        tf: [M1]
+        tf: [M1, M5]
     steps:
       - uses: actions/download-artifact@v2
         with:
@@ -85,6 +85,7 @@ jobs:
           SetFile: ${{ github.workspace }}/sets/Indi_RSI_Applied_Price.set
           TestExpert: "Stg_RSI"
           TestPeriod: ${{ matrix.tf }}
+          TestReportName: Report-${{ matrix.pair }}-${{ matrix.tf }}
       - name: Upload result files
         uses: actions/upload-artifact@v2
         with:
@@ -104,9 +105,11 @@ jobs:
             _results/*.json >> $GITHUB_ENV
       - uses: actions/checkout@v2
       - name: Update config file
+        env:
+          KEY: applied_price
         run: |
           ex -u NONE -V1 \
-            +"%s@\\<applied_price[^=]\\?=\\s\\?[^-.0-9]\\+\\zs[^;$]\\+@${!pname}@" \
+            +"%s@\\<$KEY[^=]\\?=\\s\\?[^-.0-9]\\+\\zs[^;$]\\+@${!pname}@" \
             -scwq! ./config/${{ matrix.pair }}_${{ matrix.tf }}.h
       - name: Upload updated config file
         uses: actions/upload-artifact@v2
@@ -132,9 +135,9 @@ jobs:
           path: .results
       - name: Parse results
         run: |
-          echo RES_DD=$(jq -r '."Drawdown %"' .results/*.json) >> $GITHUB_ENV
-          echo RES_PF=$(jq -r '."Profit factor"' .results/*.json) >> $GITHUB_ENV
-          echo RES_TT=$(jq -r '."Total trades"' .results/*.json) >> $GITHUB_ENV
+          echo RES_DD=$(jq -rs '.[0]|."Drawdown %"' .results/*.json) >> $GITHUB_ENV
+          echo RES_PF=$(jq -rs '.[0]|."Profit factor"' .results/*.json) >> $GITHUB_ENV
+          echo RES_TT=$(jq -rs '.[0]|."Total trades"' .results/*.json) >> $GITHUB_ENV
         shell: bash -ex {0}
       - name: Commit files
         env:
