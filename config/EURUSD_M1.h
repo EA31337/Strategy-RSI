@@ -17,7 +17,7 @@ struct Stg_RSI_Params_M1 : StgParams {
   // Struct constructor.
   Stg_RSI_Params_M1() : StgParams(stg_rsi_defaults) {
     lot_size = 0;
-    signal_open_method = 0;
+    signal_open_method = 63;
     signal_open_filter = 1;
     signal_open_level = 30;
     signal_open_boost = 0;
