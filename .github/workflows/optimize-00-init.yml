@@ -1,0 +1,29 @@
+---
+name: Optimize Init
+
+# yamllint disable-line rule:truthy
+on:
+  push:
+    branches:
+      - 'optimize-init'
+      - 'optimize-init-*'
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Python Test
+        env:
+          PYTHONPATH: .
+        run: |
+          import sys
+          print(sys.version)
+          print(sys.version_info)
+          import os
+          print(os.getcwd())
+          from ReportParser import *
+          parser = ReportParser()
+          print(parser)
+        shell: python3 {0}
+        working-directory: ${{ github.workspace }}/.github
