@@ -92,6 +92,15 @@ jobs:
           TestExpert: "Stg_RSI"
           TestPeriod: ${{ matrix.tf }}
           TestReportName: Report-${{ matrix.pair }}-${{ matrix.tf }}
+      - name: Run ReportParser
+        env:
+          PYTHONPATH: .
+        run: |
+          from ReportParser import *
+          parser = ReportParser()
+          print(parser)
+        shell: python3 {0}
+        working-directory: ${{ github.workspace }}/.github
       - name: Upload result files
         uses: actions/upload-artifact@v2
         with:
