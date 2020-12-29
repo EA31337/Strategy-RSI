@@ -1,12 +1,12 @@
 ---
-name: Optimize Indi_RSI_Period
+name: Optimize SignalOpenLevel
 
 # yamllint disable-line rule:truthy
 on:
   push:
     branches:
-      - 'optimize-indi-rsi-period'
-      - 'optimize-indi-rsi-period-*'
+      - 'optimize-sol'
+      - 'optimize-sol-*'
 
 jobs:
   Compile:
@@ -52,15 +52,12 @@ jobs:
           name: sets
           path: 'sets/optimize/*.set'
   Optimize:
-    defaults:
-      run:
-        shell: bash --noprofile --norc -eo pipefail -x {0}
     needs: Compile
     runs-on: ubuntu-latest
     strategy:
       matrix:
         pair: [EURUSD]
-        tf: [M1, M5, M15, M30]
+        tf: [M1, M5]
     steps:
       - uses: actions/download-artifact@v2
         with:
@@ -81,6 +78,7 @@ jobs:
       - uses: ea31337/mql-tester-action@master
         with:
           BtDest: ${{ github.workspace }}/_results
+          BtDays: 1-10
           BtMonths: 1
           BtPair: ${{ matrix.pair }}
           BtYears: 2019
@@ -88,19 +86,10 @@ jobs:
           OptFormatJson: true
           OptOptimize: true
           OptVerbose: true
-          SetFile: ${{ github.workspace }}/sets/Indi_RSI_Period.set
+          SetFile: ${{ github.workspace }}/sets/SignalOpenLevel.set
           TestExpert: "Stg_RSI"
           TestPeriod: ${{ matrix.tf }}
           TestReportName: Report-${{ matrix.pair }}-${{ matrix.tf }}
-      - name: Run ReportParser
-        env:
-          PYTHONPATH: .
-        run: |
-          from ReportParser import *
-          parser = ReportParser()
-          print(parser)
-        shell: python3 {0}
-        working-directory: ${{ github.workspace }}/.github
       - name: Upload result files
         uses: actions/upload-artifact@v2
         with:
@@ -121,7 +110,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Update config file
         env:
-          KEY: period
+          KEY: signal_open_level
         run: |
           ex -u NONE -V1 \
             +"%s@\\<$KEY[^=]\\?=\\s\\?[^-.0-9]\\+\\zs[^;$]\\+@${!pname}@" \
