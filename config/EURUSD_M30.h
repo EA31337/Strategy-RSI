@@ -22,7 +22,7 @@ struct Stg_RSI_Params_M30 : StgParams {
     signal_open_level = 30;
     signal_open_boost = 0;
     signal_close_method = 0;
-    signal_close_level = 30;
+    signal_close_level = 10;
     price_stop_method = 0;
     price_stop_level = 15;
     tick_filter_method = 1;
