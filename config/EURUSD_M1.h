@@ -21,7 +21,7 @@ struct Stg_RSI_Params_M1 : StgParams {
     signal_open_filter = 1;
     signal_open_level = 30;
     signal_open_boost = 0;
-    signal_close_method = 0;
+    signal_close_method = 21;
     signal_close_level = 30;
     price_stop_method = 0;
     price_stop_level = 15;
