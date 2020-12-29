@@ -5,4 +5,3 @@ RSI_Indi_RSI_Period,3=24
 RSI_Indi_RSI_Period,F=1
 RSI_SignalOpenFilterMethod=1
 RSI_TickFilterMethod=1
-foobar

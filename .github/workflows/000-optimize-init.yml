@@ -51,3 +51,30 @@ jobs:
         with:
           name: sets
           path: 'sets/optimize/*.set'
+  Python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run ReportParser
+        env:
+          PYTHONPATH: .
+        run: |
+          from ReportParser import *
+          parser = ReportParser()
+          print(parser)
+        shell: python3 {0}
+        working-directory: ${{ github.workspace }}/.github
+  Push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+          # Otherwise, you will failed to push refs to dest repo.
+          fetch-depth: 0
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          branch: optimize-indi-rsi-period
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          force: true

@@ -1,12 +1,12 @@
 ---
-name: Optimize Indi_RSI_Period
+name: Optimize SignalCloseLevel
 
 # yamllint disable-line rule:truthy
 on:
   push:
     branches:
-      - 'optimize-indi-rsi-period'
-      - 'optimize-indi-rsi-period-*'
+      - 'optimize-scl'
+      - 'optimize-scl-*'
 
 jobs:
   Compile:
@@ -52,9 +52,6 @@ jobs:
           name: sets
           path: 'sets/optimize/*.set'
   Optimize:
-    defaults:
-      run:
-        shell: bash --noprofile --norc -eo pipefail -x {0}
     needs: Compile
     runs-on: ubuntu-latest
     strategy:
@@ -88,19 +85,10 @@ jobs:
           OptFormatJson: true
           OptOptimize: true
           OptVerbose: true
-          SetFile: ${{ github.workspace }}/sets/Indi_RSI_Period.set
+          SetFile: ${{ github.workspace }}/sets/SignalCloseLevel.set
           TestExpert: "Stg_RSI"
           TestPeriod: ${{ matrix.tf }}
           TestReportName: Report-${{ matrix.pair }}-${{ matrix.tf }}
-      - name: Run ReportParser
-        env:
-          PYTHONPATH: .
-        run: |
-          from ReportParser import *
-          parser = ReportParser()
-          print(parser)
-        shell: python3 {0}
-        working-directory: ${{ github.workspace }}/.github
       - name: Upload result files
         uses: actions/upload-artifact@v2
         with:
@@ -121,7 +109,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Update config file
         env:
-          KEY: period
+          KEY: signal_close_level
         run: |
           ex -u NONE -V1 \
             +"%s@\\<$KEY[^=]\\?=\\s\\?[^-.0-9]\\+\\zs[^;$]\\+@${!pname}@" \
@@ -185,6 +173,7 @@ jobs:
         with:
           branch: dev-optimize-${{ env.PF }}pf-${{ env.DD }}dd-${{ env.TT }}tt
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          force: true
       - name: Re-pull on failure
         if: ${{ failure() }}
         run: git pull origin ${{ github.ref }} --autostash --rebase -X ours

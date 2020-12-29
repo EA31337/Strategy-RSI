@@ -5,4 +5,3 @@ RSI_SignalCloseLevel,3=40
 RSI_SignalCloseLevel,F=1
 RSI_SignalOpenFilterMethod=1
 RSI_TickFilterMethod=1
-foobar

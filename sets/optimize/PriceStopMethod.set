@@ -5,4 +5,3 @@ RSI_PriceStopMethod,3=4
 RSI_PriceStopMethod,F=1
 RSI_SignalOpenFilterMethod=1
 RSI_TickFilterMethod=1
-foobar
