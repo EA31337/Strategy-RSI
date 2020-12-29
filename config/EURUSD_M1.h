@@ -26,6 +26,6 @@ struct Stg_RSI_Params_M1 : StgParams {
     price_stop_method = 0;
     price_stop_level = 15;
     tick_filter_method = 1;
-    max_spread = 0;
+    max_spread = 40;
   }
 } stg_rsi_m1;
