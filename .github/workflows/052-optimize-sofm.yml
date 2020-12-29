@@ -78,7 +78,7 @@ jobs:
       - uses: ea31337/mql-tester-action@master
         with:
           BtDest: ${{ github.workspace }}/_results
-          BtMonths: 1
+          BtMonths: 11-12
           BtPair: ${{ matrix.pair }}
           BtYears: 2019
           OptFormatBrief: true
