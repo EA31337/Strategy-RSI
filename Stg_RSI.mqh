@@ -18,15 +18,15 @@ INPUT float RSI_MaxSpread = 0;             // Max spread to trade (pips)
 INPUT int RSI_Shift = 0;                   // Shift
 INPUT int RSI_OrderCloseTime = -10;        // Order close time in mins (>0) or bars (<0)
 INPUT string __RSI_Indi_RSI_Parameters__ =
-    "-- RSI strategy: RSI indicator params --";                           // >>> RSI strategy: RSI indicator <<<
-INPUT int RSI_Indi_RSI_Period = 12;                                       // Period
-INPUT ENUM_APPLIED_PRICE Indi_RSI_Applied_Price = (ENUM_APPLIED_PRICE)0;  // Applied Price
+    "-- RSI strategy: RSI indicator params --";                               // >>> RSI strategy: RSI indicator <<<
+INPUT int RSI_Indi_RSI_Period = 12;                                           // Period
+INPUT ENUM_APPLIED_PRICE RSI_Indi_RSI_Applied_Price = (ENUM_APPLIED_PRICE)0;  // Applied Price
 
 // Structs.
 
 // Defines struct with default user indicator values.
 struct Indi_RSI_Params_Defaults : RSIParams {
-  Indi_RSI_Params_Defaults() : RSIParams(::RSI_Indi_RSI_Period, ::Indi_RSI_Applied_Price) {}
+  Indi_RSI_Params_Defaults() : RSIParams(::RSI_Indi_RSI_Period, ::RSI_Indi_RSI_Applied_Price) {}
 } indi_rsi_defaults;
 
 // Defines struct to store indicator parameter values.
@@ -79,14 +79,6 @@ class Stg_RSI : public Strategy {
                                      indi_rsi_h1, indi_rsi_h4, indi_rsi_h8);
       SetParamsByTf<StgParams>(_stg_params, _tf, stg_rsi_m1, stg_rsi_m5, stg_rsi_m15, stg_rsi_m30, stg_rsi_h1,
                                stg_rsi_h4, stg_rsi_h8);
-      // Print param values.
-      // SerializerConverter _stub_ip = Serializer::MakeStubObject<DictStruct<int, Indi_RSI_Params>>();
-      // SerializerConverter _stub_sp = Serializer::MakeStubObject<DictStruct<int, StgParams>>();
-      // @fixme: Why not FromStruct()?
-      // Print(SerializerConverter::FromObject(_indi_params).ToString<SerializerCsv>(SERIALIZER_FLAG_SKIP_HIDDEN,
-      // &_stub_ip));
-      // Print(SerializerConverter::FromObject(_stg_params).ToString<SerializerCsv>(SERIALIZER_FLAG_SKIP_HIDDEN,
-      // &_stub_sp));
     }
     // Initialize indicator.
     RSIParams rsi_params(_indi_params);

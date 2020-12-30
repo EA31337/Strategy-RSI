@@ -86,7 +86,7 @@ jobs:
           OptFormatJson: true
           OptOptimize: true
           OptVerbose: true
-          SetFile: ${{ github.workspace }}/sets/Indi_RSI_Period.set
+          SetFile: ${{ github.workspace }}/sets/RSI_Indi_RSI_Period.set
           TestExpert: "Stg_RSI"
           TestPeriod: ${{ matrix.tf }}
           TestReportName: Report-${{ matrix.pair }}-${{ matrix.tf }}

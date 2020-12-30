@@ -1,7 +1,0 @@
-; Optimize strategy indicator's RSI applied price param.
-Indi_RSI_Applied_Price,1=0
-Indi_RSI_Applied_Price,2=0
-Indi_RSI_Applied_Price,3=6
-Indi_RSI_Applied_Price,F=1
-RSI_SignalOpenFilterMethod=1
-RSI_TickFilterMethod=1
