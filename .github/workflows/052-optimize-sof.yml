@@ -79,7 +79,7 @@ jobs:
         with:
           BtDeposit: 100000
           BtDest: ${{ github.workspace }}/_results
-          Bsignal_open_filtertMonths: 11-12
+          BtMonths: 11-12
           BtPair: ${{ matrix.pair }}
           BtYears: 2019
           OptFormatBrief: true
@@ -88,6 +88,7 @@ jobs:
           OptVerbose: true
           SetFile: ${{ github.workspace }}/sets/SignalOpenFilterMethod.set
           TestExpert: "Stg_RSI"
+          TestLimitOpts: maxdrawdown_enable=1,maxdrawdown=80
           TestPeriod: ${{ matrix.tf }}
           TestReportName: Report-${{ matrix.pair }}-${{ matrix.tf }}
       - name: Upload result files
