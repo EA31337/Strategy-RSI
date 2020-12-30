@@ -3,5 +3,6 @@ RSI_PriceStopMethod,1=0
 RSI_PriceStopMethod,2=1
 RSI_PriceStopMethod,3=4
 RSI_PriceStopMethod,F=1
+RSI_OrderCloseTime=-20
 RSI_SignalOpenFilterMethod=1
 RSI_TickFilterMethod=1
