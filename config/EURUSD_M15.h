@@ -18,7 +18,7 @@ struct Stg_RSI_Params_M15 : StgParams {
   Stg_RSI_Params_M15() : StgParams(stg_rsi_defaults) {
     lot_size = 0;
     signal_open_method = 0;
-    signal_open_filter = 36;
+    signal_open_filter = 4;
     signal_open_level = 30;
     signal_open_boost = 0;
     signal_close_method = -4;
