@@ -1,0 +1,9 @@
+RSI_Indi_RSI_Applied_Price,1=0
+RSI_Indi_RSI_Applied_Price,2=0
+RSI_Indi_RSI_Applied_Price,3=6
+RSI_Indi_RSI_Applied_Price,F=1
+RSI_Indi_RSI_Applied_Price={{ applied_price | replace("(ENUM_APPLIED_PRICE)", "") | int | default(0) }}
+RSI_Indi_RSI_MA_Method={{ ma_method | default(0) }}
+RSI_Indi_RSI_Period={{ period | default(4) }}
+RSI_SignalOpenFilterMethod=1
+RSI_TickFilterMethod=1
