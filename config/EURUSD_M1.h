@@ -19,10 +19,10 @@ struct Stg_RSI_Params_M1 : StgParams {
     lot_size = 0;
     signal_open_method = 0;
     signal_open_filter = 6;
-    signal_open_level = 30;
+    signal_open_level = (float)30;
     signal_open_boost = 0;
     signal_close_method = -4;
-    signal_close_level = 15;
+    signal_close_level = (float)15;
     price_stop_method = 2;
     price_stop_level = 15;
     tick_filter_method = 1;
