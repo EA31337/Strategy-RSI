@@ -24,7 +24,7 @@ struct Stg_RSI_Params_M15 : StgParams {
     signal_close_method = -4;
     signal_close_level = (float)10;
     price_stop_method = 1;
-    price_stop_level = 20;
+    price_stop_level = (float)20;
     tick_filter_method = 1;
     max_spread = 0;
   }
