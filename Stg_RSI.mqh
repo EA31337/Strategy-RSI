@@ -21,12 +21,13 @@ INPUT string __RSI_Indi_RSI_Parameters__ =
     "-- RSI strategy: RSI indicator params --";                               // >>> RSI strategy: RSI indicator <<<
 INPUT int RSI_Indi_RSI_Period = 12;                                           // Period
 INPUT ENUM_APPLIED_PRICE RSI_Indi_RSI_Applied_Price = (ENUM_APPLIED_PRICE)0;  // Applied Price
+INPUT int RSI_Indi_RSI_Shift = 0;                                             // Shift
 
 // Structs.
 
 // Defines struct with default user indicator values.
 struct Indi_RSI_Params_Defaults : RSIParams {
-  Indi_RSI_Params_Defaults() : RSIParams(::RSI_Indi_RSI_Period, ::RSI_Indi_RSI_Applied_Price) {}
+  Indi_RSI_Params_Defaults() : RSIParams(::RSI_Indi_RSI_Period, ::RSI_Indi_RSI_Applied_Price, ::RSI_Indi_RSI_Shift) {}
 } indi_rsi_defaults;
 
 // Defines struct with default user strategy values.
@@ -68,8 +69,8 @@ class Stg_RSI : public Strategy {
     Indi_RSI_Params _indi_params(indi_rsi_defaults, _tf);
     StgParams _stg_params(stg_rsi_defaults);
     if (!Terminal::IsOptimization()) {
-      SetParamsByTf<RSIParams>(_indi_params, _tf, indi_rsi_m1, indi_rsi_m5, indi_rsi_m15, indi_rsi_m30,
-                                     indi_rsi_h1, indi_rsi_h4, indi_rsi_h8);
+      SetParamsByTf<RSIParams>(_indi_params, _tf, indi_rsi_m1, indi_rsi_m5, indi_rsi_m15, indi_rsi_m30, indi_rsi_h1,
+                               indi_rsi_h4, indi_rsi_h8);
       SetParamsByTf<StgParams>(_stg_params, _tf, stg_rsi_m1, stg_rsi_m5, stg_rsi_m15, stg_rsi_m30, stg_rsi_h1,
                                stg_rsi_h4, stg_rsi_h8);
     }
