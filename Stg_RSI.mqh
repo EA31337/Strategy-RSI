@@ -6,11 +6,11 @@
 // User input params.
 INPUT float RSI_LotSize = 0;               // Lot size
 INPUT int RSI_SignalOpenMethod = 0;        // Signal open method (-63-63)
-INPUT float RSI_SignalOpenLevel = 36.0;    // Signal open level (-49-49)
+INPUT float RSI_SignalOpenLevel = 20.0;    // Signal open level (-49-49)
 INPUT int RSI_SignalOpenFilterMethod = 1;  // Signal open filter method (0-31)
 INPUT int RSI_SignalOpenBoostMethod = 0;   // Signal open boost method
 INPUT int RSI_SignalCloseMethod = 0;       // Signal close method (-63-63)
-INPUT float RSI_SignalCloseLevel = 36.0;   // Signal close level (-49-49)
+INPUT float RSI_SignalCloseLevel = 20.0;   // Signal close level (-49-49)
 INPUT int RSI_PriceStopMethod = 0;         // Price stop method
 INPUT float RSI_PriceStopLevel = 15;       // Price stop level
 INPUT int RSI_TickFilterMethod = 1;        // Tick filter method
@@ -40,11 +40,11 @@ struct Stg_RSI_Params_Defaults : StgParams {
 
 // Struct to define strategy parameters to override.
 struct Stg_RSI_Params : StgParams {
-  Indi_RSI_Params iparams;
+  RSIParams iparams;
   StgParams sparams;
 
   // Struct constructors.
-  Stg_RSI_Params(Indi_RSI_Params &_iparams, StgParams &_sparams)
+  Stg_RSI_Params(RSIParams &_iparams, StgParams &_sparams)
       : iparams(indi_rsi_defaults, _iparams.tf), sparams(stg_rsi_defaults) {
     iparams = _iparams;
     sparams = _sparams;
@@ -66,7 +66,7 @@ class Stg_RSI : public Strategy {
 
   static Stg_RSI *Init(ENUM_TIMEFRAMES _tf = NULL, long _magic_no = NULL, ENUM_LOG_LEVEL _log_level = V_INFO) {
     // Initialize strategy initial values.
-    Indi_RSI_Params _indi_params(indi_rsi_defaults, _tf);
+    RSIParams _indi_params(indi_rsi_defaults, _tf);
     StgParams _stg_params(stg_rsi_defaults);
     if (!Terminal::IsOptimization()) {
       SetParamsByTf<RSIParams>(_indi_params, _tf, indi_rsi_m1, indi_rsi_m5, indi_rsi_m15, indi_rsi_m30, indi_rsi_h1,
@@ -125,7 +125,8 @@ class Stg_RSI : public Strategy {
     if (_is_valid) {
       switch (_cmd) {
         case ORDER_TYPE_BUY:
-          _result = _indi[_i][0] < (50 - _level);
+          _result &= _indi[_i + 2][0] < (50 - _level);
+          _result &= _indi.IsIncreasing(2, 0, _i);
           if (_method != 0) {
             if (METHOD(_method, 0)) _result &= _indi[_i][0] < _indi[_i + 1][0];
             if (METHOD(_method, 1)) _result &= _indi[_i + 1][0] < _indi[_i + 2][0];
@@ -136,7 +137,8 @@ class Stg_RSI : public Strategy {
           }
           break;
         case ORDER_TYPE_SELL:
-          _result = _indi[_i][0] > (50 + _level);
+          _result &= _indi[_i + 2][0] > (50 + _level);
+          _result &= _indi.IsDecreasing(2, 0, _i);
           if (_method != 0) {
             if (METHOD(_method, 0)) _result &= _indi[_i][0] > _indi[_i + 1][0];
             if (METHOD(_method, 1)) _result &= _indi[_i + 1][0] > _indi[_i + 2][0];
