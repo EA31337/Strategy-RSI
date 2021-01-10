@@ -7,7 +7,6 @@
 struct Indi_RSI_Params_{{ Timeframe }} : RSIParams {
   Indi_RSI_Params_{{ Timeframe }}() : RSIParams(indi_rsi_defaults, PERIOD_{{ Timeframe }}) {
     applied_price = (ENUM_APPLIED_PRICE){{ RSI_Indi_RSI_Applied_Price | default(0) }};
-    ma_method = {{ RSI_Indi_RSI_MA_Method | default(0) }};
     period = {{ RSI_Indi_RSI_Period | default(0) }};
     shift = {{ RSI_Shift | default(0) }};
   }
