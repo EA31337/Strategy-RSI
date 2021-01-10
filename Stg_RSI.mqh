@@ -29,13 +29,6 @@ struct Indi_RSI_Params_Defaults : RSIParams {
   Indi_RSI_Params_Defaults() : RSIParams(::RSI_Indi_RSI_Period, ::RSI_Indi_RSI_Applied_Price) {}
 } indi_rsi_defaults;
 
-// Defines struct to store indicator parameter values.
-struct Indi_RSI_Params : public RSIParams {
-  // Struct constructors.
-  void Indi_RSI_Params(ENUM_TIMEFRAMES _tf = PERIOD_CURRENT) : RSIParams(_tf) {}
-  void Indi_RSI_Params(RSIParams &_params, ENUM_TIMEFRAMES _tf) : RSIParams(_params, _tf) {}
-};
-
 // Defines struct with default user strategy values.
 struct Stg_RSI_Params_Defaults : StgParams {
   Stg_RSI_Params_Defaults()
@@ -75,7 +68,7 @@ class Stg_RSI : public Strategy {
     Indi_RSI_Params _indi_params(indi_rsi_defaults, _tf);
     StgParams _stg_params(stg_rsi_defaults);
     if (!Terminal::IsOptimization()) {
-      SetParamsByTf<Indi_RSI_Params>(_indi_params, _tf, indi_rsi_m1, indi_rsi_m5, indi_rsi_m15, indi_rsi_m30,
+      SetParamsByTf<RSIParams>(_indi_params, _tf, indi_rsi_m1, indi_rsi_m5, indi_rsi_m15, indi_rsi_m30,
                                      indi_rsi_h1, indi_rsi_h4, indi_rsi_h8);
       SetParamsByTf<StgParams>(_stg_params, _tf, stg_rsi_m1, stg_rsi_m5, stg_rsi_m15, stg_rsi_m30, stg_rsi_h1,
                                stg_rsi_h4, stg_rsi_h8);
