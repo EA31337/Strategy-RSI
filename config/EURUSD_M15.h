@@ -6,8 +6,8 @@
 // Defines indicator's parameter values for the given pair symbol and timeframe.
 struct Indi_RSI_Params_M15 : RSIParams {
   Indi_RSI_Params_M15() : RSIParams(indi_rsi_defaults, PERIOD_M15) {
-    applied_price = (ENUM_APPLIED_PRICE)1;
-    period = 12;
+    applied_price = (ENUM_APPLIED_PRICE)2;
+    period = 8;
     shift = 0;
   }
 } indi_rsi_m15;

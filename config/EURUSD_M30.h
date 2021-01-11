@@ -6,8 +6,8 @@
 // Defines indicator's parameter values for the given pair symbol and timeframe.
 struct Indi_RSI_Params_M30 : RSIParams {
   Indi_RSI_Params_M30() : RSIParams(indi_rsi_defaults, PERIOD_M30) {
-    applied_price = (ENUM_APPLIED_PRICE)1;
-    period = 12;
+    applied_price = (ENUM_APPLIED_PRICE)2;
+    period = 8;
     shift = 0;
   }
 } indi_rsi_m30;
@@ -17,7 +17,7 @@ struct Stg_RSI_Params_M30 : StgParams {
   // Struct constructor.
   Stg_RSI_Params_M30() : StgParams(stg_rsi_defaults) {
     lot_size = 0;
-    signal_open_method = 63;
+    signal_open_method = 0;
     signal_open_filter = 4;
     signal_open_level = (float)20;
     signal_open_boost = 0;
