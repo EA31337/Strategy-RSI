@@ -7,7 +7,7 @@
 struct Indi_RSI_Params_M1 : RSIParams {
   Indi_RSI_Params_M1() : RSIParams(indi_rsi_defaults, PERIOD_M1) {
     applied_price = (ENUM_APPLIED_PRICE)3;
-    period = 20;
+    period = 32;
     shift = 0;
   }
 } indi_rsi_m1;
