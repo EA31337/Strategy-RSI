@@ -69,12 +69,12 @@ class Stg_RSI : public Strategy {
     // Initialize strategy initial values.
     RSIParams _indi_params(indi_rsi_defaults, _tf);
     StgParams _stg_params(stg_rsi_defaults);
-    if (!Terminal::IsOptimization()) {
-      SetParamsByTf<RSIParams>(_indi_params, _tf, indi_rsi_m1, indi_rsi_m5, indi_rsi_m15, indi_rsi_m30, indi_rsi_h1,
-                               indi_rsi_h4, indi_rsi_h8);
-      SetParamsByTf<StgParams>(_stg_params, _tf, stg_rsi_m1, stg_rsi_m5, stg_rsi_m15, stg_rsi_m30, stg_rsi_h1,
-                               stg_rsi_h4, stg_rsi_h8);
-    }
+#ifdef __config__
+    SetParamsByTf<RSIParams>(_indi_params, _tf, indi_rsi_m1, indi_rsi_m5, indi_rsi_m15, indi_rsi_m30, indi_rsi_h1,
+                             indi_rsi_h4, indi_rsi_h8);
+    SetParamsByTf<StgParams>(_stg_params, _tf, stg_rsi_m1, stg_rsi_m5, stg_rsi_m15, stg_rsi_m30, stg_rsi_h1, stg_rsi_h4,
+                             stg_rsi_h8);
+#endif
     // Initialize indicator.
     RSIParams rsi_params(_indi_params);
     _stg_params.SetIndicator(new Indi_RSI(_indi_params));
