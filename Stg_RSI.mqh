@@ -4,19 +4,20 @@
  */
 
 // User input params.
-INPUT float RSI_LotSize = 0;               // Lot size
-INPUT int RSI_SignalOpenMethod = 0;        // Signal open method (-63-63)
-INPUT float RSI_SignalOpenLevel = 20.0;    // Signal open level (-49-49)
-INPUT int RSI_SignalOpenFilterMethod = 1;  // Signal open filter method (0-31)
-INPUT int RSI_SignalOpenBoostMethod = 0;   // Signal open boost method
-INPUT int RSI_SignalCloseMethod = 0;       // Signal close method (-63-63)
-INPUT float RSI_SignalCloseLevel = 20.0;   // Signal close level (-49-49)
-INPUT int RSI_PriceStopMethod = 0;         // Price stop method
-INPUT float RSI_PriceStopLevel = 15;       // Price stop level
-INPUT int RSI_TickFilterMethod = 1;        // Tick filter method
-INPUT float RSI_MaxSpread = 4.0;           // Max spread to trade (pips)
-INPUT int RSI_Shift = 0;                   // Shift
-INPUT int RSI_OrderCloseTime = -20;        // Order close time in mins (>0) or bars (<0)
+INPUT string __RSI_Parameters__ = "-- RSI strategy params --";  // >>> RSI <<<
+INPUT float RSI_LotSize = 0;                                    // Lot size
+INPUT int RSI_SignalOpenMethod = 0;                             // Signal open method (-63-63)
+INPUT float RSI_SignalOpenLevel = 20.0;                         // Signal open level (-49-49)
+INPUT int RSI_SignalOpenFilterMethod = 1;                       // Signal open filter method (0-31)
+INPUT int RSI_SignalOpenBoostMethod = 0;                        // Signal open boost method
+INPUT int RSI_SignalCloseMethod = 0;                            // Signal close method (-63-63)
+INPUT float RSI_SignalCloseLevel = 20.0;                        // Signal close level (-49-49)
+INPUT int RSI_PriceStopMethod = 0;                              // Price stop method
+INPUT float RSI_PriceStopLevel = 15;                            // Price stop level
+INPUT int RSI_TickFilterMethod = 1;                             // Tick filter method
+INPUT float RSI_MaxSpread = 4.0;                                // Max spread to trade (pips)
+INPUT int RSI_Shift = 0;                                        // Shift
+INPUT int RSI_OrderCloseTime = -20;                             // Order close time in mins (>0) or bars (<0)
 INPUT string __RSI_Indi_RSI_Parameters__ =
     "-- RSI strategy: RSI indicator params --";                               // >>> RSI strategy: RSI indicator <<<
 INPUT int RSI_Indi_RSI_Period = 12;                                           // Period
@@ -68,12 +69,12 @@ class Stg_RSI : public Strategy {
     // Initialize strategy initial values.
     RSIParams _indi_params(indi_rsi_defaults, _tf);
     StgParams _stg_params(stg_rsi_defaults);
-    if (!Terminal::IsOptimization()) {
-      SetParamsByTf<RSIParams>(_indi_params, _tf, indi_rsi_m1, indi_rsi_m5, indi_rsi_m15, indi_rsi_m30, indi_rsi_h1,
-                               indi_rsi_h4, indi_rsi_h8);
-      SetParamsByTf<StgParams>(_stg_params, _tf, stg_rsi_m1, stg_rsi_m5, stg_rsi_m15, stg_rsi_m30, stg_rsi_h1,
-                               stg_rsi_h4, stg_rsi_h8);
-    }
+#ifdef __config__
+    SetParamsByTf<RSIParams>(_indi_params, _tf, indi_rsi_m1, indi_rsi_m5, indi_rsi_m15, indi_rsi_m30, indi_rsi_h1,
+                             indi_rsi_h4, indi_rsi_h8);
+    SetParamsByTf<StgParams>(_stg_params, _tf, stg_rsi_m1, stg_rsi_m5, stg_rsi_m15, stg_rsi_m30, stg_rsi_h1, stg_rsi_h4,
+                             stg_rsi_h8);
+#endif
     // Initialize indicator.
     RSIParams rsi_params(_indi_params);
     _stg_params.SetIndicator(new Indi_RSI(_indi_params));
@@ -83,7 +84,6 @@ class Stg_RSI : public Strategy {
     _stg_params.SetTf(_tf, _Symbol);
     // Initialize strategy instance.
     Strategy *_strat = new Stg_RSI(_stg_params, "RSI");
-    _stg_params.SetStops(_strat, _strat);
     return _strat;
   }
 
