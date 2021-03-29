@@ -16,7 +16,7 @@ INPUT int RSI_PriceStopMethod = 0;                              // Price stop me
 INPUT float RSI_PriceStopLevel = 15;                            // Price stop level
 INPUT int RSI_TickFilterMethod = 1;                             // Tick filter method
 INPUT float RSI_MaxSpread = 4.0;                                // Max spread to trade (pips)
-INPUT int RSI_Shift = 0;                                        // Shift
+INPUT short RSI_Shift = 0;                                      // Shift
 INPUT int RSI_OrderCloseTime = -20;                             // Order close time in mins (>0) or bars (<0)
 INPUT string __RSI_Indi_RSI_Parameters__ =
     "-- RSI strategy: RSI indicator params --";                               // >>> RSI strategy: RSI indicator <<<
