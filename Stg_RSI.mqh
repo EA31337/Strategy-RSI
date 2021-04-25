@@ -63,7 +63,8 @@ struct Stg_RSI_Params : StgParams {
 
 class Stg_RSI : public Strategy {
  public:
-  Stg_RSI(StgParams &_params, Trade *_trade = NULL, string _name = "") : Strategy(_params, _trade, _name) {}
+  Stg_RSI(StgParams &_sparams, TradeParams &_tparams, ChartParams &_cparams, string _name = "")
+      : Strategy(_sparams, _tparams, _cparams, _name) {}
 
   static Stg_RSI *Init(ENUM_TIMEFRAMES _tf = NULL, long _magic_no = NULL, ENUM_LOG_LEVEL _log_level = V_INFO) {
     // Initialize strategy initial values.
@@ -79,8 +80,9 @@ class Stg_RSI : public Strategy {
     RSIParams rsi_params(_indi_params);
     _stg_params.SetIndicator(new Indi_RSI(_indi_params));
     // Initialize Strategy instance.
+    ChartParams _cparams(_tf, _Symbol);
     TradeParams _tparams(_magic_no, _log_level);
-    Strategy *_strat = new Stg_RSI(_stg_params, new Trade(new Chart(_tf, _Symbol)), "RSI");
+    Strategy *_strat = new Stg_RSI(_stg_params, _tparams, _cparams, "RSI");
     return _strat;
   }
 
