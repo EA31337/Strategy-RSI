@@ -89,7 +89,7 @@ class Stg_RSI : public Strategy {
   /**
    * Executes on new time periods.
    */
-  void OnPeriod(unsigned short _periods = DATETIME_NONE) {
+  void OnPeriod(unsigned int _periods = DATETIME_NONE) {
     if ((_periods & DATETIME_MINUTE) != 0) {
       // New minute started.
     }
