@@ -8,7 +8,7 @@ INPUT string __RSI_Parameters__ = "-- RSI strategy params --";  // >>> RSI <<<
 INPUT float RSI_LotSize = 0;                                    // Lot size
 INPUT int RSI_SignalOpenMethod = 2;                             // Signal open method (-127-127)
 INPUT float RSI_SignalOpenLevel = 20.0;                         // Signal open level (-49-49)
-INPUT int RSI_SignalOpenFilterMethod = 32;                       // Signal open filter method (0-31)
+INPUT int RSI_SignalOpenFilterMethod = 32;                      // Signal open filter method (0-31)
 INPUT int RSI_SignalOpenBoostMethod = 0;                        // Signal open boost method
 INPUT int RSI_SignalCloseMethod = 2;                            // Signal close method (-127-127)
 INPUT float RSI_SignalCloseLevel = 20.0;                        // Signal close level (-49-49)
@@ -117,36 +117,21 @@ class Stg_RSI : public Strategy {
    * Check strategy's opening signal.
    */
   bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method, float _level = 0.0f, int _shift = 0) {
-    int _i = _shift;
     Indi_RSI *_indi = GetIndicator();
-    bool _is_valid = _indi[_i].IsValid() && _indi[_i + 1].IsValid() && _indi[_i + 2].IsValid();
+    bool _is_valid = _indi[_shift].IsValid() && _indi[_shift + 1].IsValid() && _indi[_shift + 2].IsValid();
     bool _result = _is_valid;
     if (_is_valid) {
+      IndicatorSignal _signals = _indi.GetSignals(4, _shift);
       switch (_cmd) {
         case ORDER_TYPE_BUY:
-          _result &= _indi[_i + 2][0] < (50 - _level);
-          _result &= _indi.IsIncreasing(2, 0, _i);
-          if (_method != 0) {
-            if (METHOD(_method, 0)) _result &= _indi[_i][0] < _indi[_i + 1][0];
-            if (METHOD(_method, 1)) _result &= _indi[_i + 1][0] < _indi[_i + 2][0];
-            if (METHOD(_method, 2)) _result &= _indi[_i + 1][0] < (50 - _level);
-            if (METHOD(_method, 3)) _result &= _indi[_i + 2][0] < (50 - _level);
-            if (METHOD(_method, 4)) _result &= _indi[_i][0] - _indi[_i + 1][0] > _indi[_i + 1][0] - _indi[_i + 2][0];
-            if (METHOD(_method, 5)) _result &= _indi[_i + 2][0] > 50;
-          }
+          _result &= _indi[_shift][0] > (50 - _level) && _indi[_shift + 1][0] < (50 - _level);
+          _result &= _indi.IsIncreasing(2, 0, _shift);
+          _result &= _method > 0 ? _signals.CheckSignals(_method) : _signals.CheckSignalsAll(-_method);
           break;
         case ORDER_TYPE_SELL:
-          _result &= _indi[_i + 2][0] > (50 + _level);
-          _result &= _indi.IsDecreasing(2, 0, _i);
-          if (_method != 0) {
-            if (METHOD(_method, 0)) _result &= _indi[_i][0] > _indi[_i + 1][0];
-            if (METHOD(_method, 1)) _result &= _indi[_i + 1][0] > _indi[_i + 2][0];
-            if (METHOD(_method, 2)) _result &= _indi[_i + 1][0] > (50 + _level);
-            if (METHOD(_method, 3)) _result &= _indi[_i + 2][0] > (50 + _level);
-            if (METHOD(_method, 4))
-              _result &= (_indi[_i + 1][0] - _indi[_i][0]) > (_indi[_i + 2][0] - _indi[_i + 1][0]);
-            if (METHOD(_method, 5)) _result &= _indi[_i + 2][0] < 50;
-          }
+          _result &= _indi[_shift][0] < (50 + _level) && _indi[_shift + 1][0] > (50 + _level);
+          _result &= _indi.IsDecreasing(2, 0, _shift);
+          _result &= _method > 0 ? _signals.CheckSignals(_method) : _signals.CheckSignalsAll(-_method);
           break;
       }
     }
