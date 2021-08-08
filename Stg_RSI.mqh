@@ -18,6 +18,8 @@ INPUT float RSI_PriceStopLevel = 15;        // Price stop level
 INPUT int RSI_TickFilterMethod = 1;         // Tick filter method
 INPUT float RSI_MaxSpread = 4.0;            // Max spread to trade (pips)
 INPUT short RSI_Shift = 0;                  // Shift
+INPUT float RSI_OrderCloseLoss = 0;         // Order close loss
+INPUT float RSI_OrderCloseProfit = 0;       // Order close profit
 INPUT int RSI_OrderCloseTime = -20;         // Order close time in mins (>0) or bars (<0)
 INPUT_GROUP("RSI strategy: RSI indicator params");
 INPUT int RSI_Indi_RSI_Period = 12;                                           // Period
@@ -36,8 +38,11 @@ struct Stg_RSI_Params_Defaults : StgParams {
   Stg_RSI_Params_Defaults()
       : StgParams(::RSI_SignalOpenMethod, ::RSI_SignalOpenFilterMethod, ::RSI_SignalOpenLevel,
                   ::RSI_SignalOpenBoostMethod, ::RSI_SignalCloseMethod, ::RSI_SignalCloseFilter, ::RSI_SignalCloseLevel,
-                  ::RSI_PriceStopMethod, ::RSI_PriceStopLevel, ::RSI_TickFilterMethod, ::RSI_MaxSpread, ::RSI_Shift,
-                  ::RSI_OrderCloseTime) {}
+                  ::RSI_PriceStopMethod, ::RSI_PriceStopLevel, ::RSI_TickFilterMethod, ::RSI_MaxSpread, ::RSI_Shift) {
+    Set(STRAT_PARAM_OCL, RSI_OrderCloseLoss);
+    Set(STRAT_PARAM_OCP, RSI_OrderCloseProfit);
+    Set(STRAT_PARAM_OCT, RSI_OrderCloseTime);
+  }
 } stg_rsi_defaults;
 
 // Struct to define strategy parameters to override.
