@@ -11,6 +11,7 @@ INPUT float RSI_SignalOpenLevel = 20.0;     // Signal open level (-49-49)
 INPUT int RSI_SignalOpenFilterMethod = 32;  // Signal open filter method (0-31)
 INPUT int RSI_SignalOpenBoostMethod = 0;    // Signal open boost method
 INPUT int RSI_SignalCloseMethod = 2;        // Signal close method (-127-127)
+INPUT int RSI_SignalCloseFilter = 0;        // Signal close filter (-127-127)
 INPUT float RSI_SignalCloseLevel = 20.0;    // Signal close level (-49-49)
 INPUT int RSI_PriceStopMethod = 1;          // Price stop method
 INPUT float RSI_PriceStopLevel = 15;        // Price stop level
@@ -34,8 +35,9 @@ struct Indi_RSI_Params_Defaults : RSIParams {
 struct Stg_RSI_Params_Defaults : StgParams {
   Stg_RSI_Params_Defaults()
       : StgParams(::RSI_SignalOpenMethod, ::RSI_SignalOpenFilterMethod, ::RSI_SignalOpenLevel,
-                  ::RSI_SignalOpenBoostMethod, ::RSI_SignalCloseMethod, ::RSI_SignalCloseLevel, ::RSI_PriceStopMethod,
-                  ::RSI_PriceStopLevel, ::RSI_TickFilterMethod, ::RSI_MaxSpread, ::RSI_Shift, ::RSI_OrderCloseTime) {}
+                  ::RSI_SignalOpenBoostMethod, ::RSI_SignalCloseMethod, ::RSI_SignalCloseFilter, ::RSI_SignalCloseLevel,
+                  ::RSI_PriceStopMethod, ::RSI_PriceStopLevel, ::RSI_TickFilterMethod, ::RSI_MaxSpread, ::RSI_Shift,
+                  ::RSI_OrderCloseTime) {}
 } stg_rsi_defaults;
 
 // Struct to define strategy parameters to override.
