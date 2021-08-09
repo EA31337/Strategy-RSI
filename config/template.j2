@@ -18,7 +18,7 @@ struct Stg_RSI_Params_{{ Timeframe }} : StgParams {
   Stg_RSI_Params_{{ Timeframe }}() : StgParams(stg_rsi_defaults) {
     lot_size = {{ RSI_LotSize | default(0) }};
     signal_open_method = {{ RSI_SignalOpenMethod | default(0) }};
-    signal_open_filter = {{ RSI_SignalOpenFilterMethod | default(1) }};
+    signal_open_filter_method = {{ RSI_SignalOpenFilterMethod | default(1) }};
     signal_open_level = (float){{ RSI_SignalOpenLevel | default(0) }};
     signal_open_boost = {{ RSI_SignalOpenBoostMethod | default(0) }};
     signal_close_method = {{ RSI_SignalCloseMethod | default(0) }};
