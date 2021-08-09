@@ -9,6 +9,7 @@ INPUT float RSI_LotSize = 0;                // Lot size
 INPUT int RSI_SignalOpenMethod = 2;         // Signal open method (-127-127)
 INPUT float RSI_SignalOpenLevel = 20.0;     // Signal open level (-49-49)
 INPUT int RSI_SignalOpenFilterMethod = 32;  // Signal open filter method (0-31)
+INPUT int RSI_SignalOpenFilterTime = 6;     // Signal open filter time (0-31)
 INPUT int RSI_SignalOpenBoostMethod = 0;    // Signal open boost method
 INPUT int RSI_SignalCloseMethod = 2;        // Signal close method (-127-127)
 INPUT int RSI_SignalCloseFilter = 0;        // Signal close filter (-127-127)
@@ -42,6 +43,7 @@ struct Stg_RSI_Params_Defaults : StgParams {
     Set(STRAT_PARAM_OCL, RSI_OrderCloseLoss);
     Set(STRAT_PARAM_OCP, RSI_OrderCloseProfit);
     Set(STRAT_PARAM_OCT, RSI_OrderCloseTime);
+    Set(STRAT_PARAM_SOFT, RSI_SignalOpenFilterTime);
   }
 } stg_rsi_defaults;
 
