@@ -6,26 +6,26 @@
 // User input params.
 INPUT_GROUP("RSI strategy: strategy params");
 INPUT float RSI_LotSize = 0;                // Lot size
-INPUT int RSI_SignalOpenMethod = 2;         // Signal open method (-127-127)
-INPUT float RSI_SignalOpenLevel = 20.0;     // Signal open level (-49-49)
+INPUT int RSI_SignalOpenMethod = 0;         // Signal open method (-127-127)
+INPUT float RSI_SignalOpenLevel = 24.0;     // Signal open level (-49-49)
 INPUT int RSI_SignalOpenFilterMethod = 32;  // Signal open filter method (0-31)
-INPUT int RSI_SignalOpenFilterTime = 6;     // Signal open filter time (0-31)
+INPUT int RSI_SignalOpenFilterTime = 8;     // Signal open filter time (0-31)
 INPUT int RSI_SignalOpenBoostMethod = 0;    // Signal open boost method
-INPUT int RSI_SignalCloseMethod = 2;        // Signal close method (-127-127)
-INPUT int RSI_SignalCloseFilter = 0;        // Signal close filter (-127-127)
-INPUT float RSI_SignalCloseLevel = 20.0;    // Signal close level (-49-49)
-INPUT int RSI_PriceStopMethod = 1;          // Price stop method
-INPUT float RSI_PriceStopLevel = 15;        // Price stop level
+INPUT int RSI_SignalCloseMethod = 0;        // Signal close method (-127-127)
+INPUT int RSI_SignalCloseFilter = 32;       // Signal close filter (-127-127)
+INPUT float RSI_SignalCloseLevel = 24.0;    // Signal close level (-49-49)
+INPUT int RSI_PriceStopMethod = 1;          // Price stop method (0-127)
+INPUT float RSI_PriceStopLevel = 0;         // Price stop level
 INPUT int RSI_TickFilterMethod = 1;         // Tick filter method
 INPUT float RSI_MaxSpread = 4.0;            // Max spread to trade (pips)
 INPUT short RSI_Shift = 0;                  // Shift
 INPUT float RSI_OrderCloseLoss = 0;         // Order close loss
 INPUT float RSI_OrderCloseProfit = 0;       // Order close profit
-INPUT int RSI_OrderCloseTime = -20;         // Order close time in mins (>0) or bars (<0)
+INPUT int RSI_OrderCloseTime = -30;         // Order close time in mins (>0) or bars (<0)
 INPUT_GROUP("RSI strategy: RSI indicator params");
-INPUT int RSI_Indi_RSI_Period = 12;                                           // Period
-INPUT ENUM_APPLIED_PRICE RSI_Indi_RSI_Applied_Price = (ENUM_APPLIED_PRICE)0;  // Applied Price
-INPUT int RSI_Indi_RSI_Shift = 0;                                             // Shift
+INPUT int RSI_Indi_RSI_Period = 16;                                    // Period
+INPUT ENUM_APPLIED_PRICE RSI_Indi_RSI_Applied_Price = PRICE_WEIGHTED;  // Applied Price
+INPUT int RSI_Indi_RSI_Shift = 0;                                      // Shift
 
 // Structs.
 
@@ -126,7 +126,8 @@ class Stg_RSI : public Strategy {
    */
   bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method, float _level = 0.0f, int _shift = 0) {
     Indi_RSI *_indi = GetIndicator();
-    bool _result = _indi.GetFlag(INDI_ENTRY_FLAG_IS_VALID);
+    bool _result =
+        _indi.GetFlag(INDI_ENTRY_FLAG_IS_VALID, _shift) && _indi.GetFlag(INDI_ENTRY_FLAG_IS_VALID, _shift + 1);
     if (!_result) {
       // Returns false when indicator data is not valid.
       return false;
@@ -134,13 +135,15 @@ class Stg_RSI : public Strategy {
     IndicatorSignal _signals = _indi.GetSignals(4, _shift);
     switch (_cmd) {
       case ORDER_TYPE_BUY:
-        _result &= _indi[_shift][0] > (50 - _level) && _indi[_shift + 1][0] < (50 - _level);
-        _result &= _indi.IsIncreasing(2, 0, _shift);
+        _result &= _indi[_shift][0] < (50 - _level);
+        _result &= _indi.IsIncreasing(1, 0, _shift);
+        _result &= _indi.IsIncByPct(_level / 10, 0, _shift, 2);
         _result &= _method > 0 ? _signals.CheckSignals(_method) : _signals.CheckSignalsAll(-_method);
         break;
       case ORDER_TYPE_SELL:
-        _result &= _indi[_shift][0] < (50 + _level) && _indi[_shift + 1][0] > (50 + _level);
-        _result &= _indi.IsDecreasing(2, 0, _shift);
+        _result &= _indi[_shift][0] > (50 + _level);
+        _result &= _indi.IsDecreasing(1, 0, _shift);
+        _result &= _indi.IsDecByPct(_level / 10, 0, _shift, 2);
         _result &= _method > 0 ? _signals.CheckSignals(_method) : _signals.CheckSignalsAll(-_method);
         break;
     }
