@@ -40,6 +40,7 @@ struct Stg_RSI_Params_Defaults : StgParams {
       : StgParams(::RSI_SignalOpenMethod, ::RSI_SignalOpenFilterMethod, ::RSI_SignalOpenLevel,
                   ::RSI_SignalOpenBoostMethod, ::RSI_SignalCloseMethod, ::RSI_SignalCloseFilter, ::RSI_SignalCloseLevel,
                   ::RSI_PriceStopMethod, ::RSI_PriceStopLevel, ::RSI_TickFilterMethod, ::RSI_MaxSpread, ::RSI_Shift) {
+    Set(STRAT_PARAM_LS, RSI_LotSize);
     Set(STRAT_PARAM_OCL, RSI_OrderCloseLoss);
     Set(STRAT_PARAM_OCP, RSI_OrderCloseProfit);
     Set(STRAT_PARAM_OCT, RSI_OrderCloseTime);
