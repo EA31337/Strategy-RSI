@@ -77,7 +77,6 @@ class Stg_RSI : public Strategy {
                              stg_rsi_h8);
 #endif
     // Initialize indicator.
-    RSIParams rsi_params(_indi_params);
     _stg_params.SetIndicator(new Indi_RSI(_indi_params));
     // Initialize Strategy instance.
     ChartParams _cparams(_tf, _Symbol);
