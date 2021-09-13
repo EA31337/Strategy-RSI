@@ -32,7 +32,7 @@ INPUT int RSI_Indi_RSI_Shift = 0;                                      // Shift
 // Defines struct with default user indicator values.
 struct Indi_RSI_Params_Defaults : RSIParams {
   Indi_RSI_Params_Defaults() : RSIParams(::RSI_Indi_RSI_Period, ::RSI_Indi_RSI_Applied_Price, ::RSI_Indi_RSI_Shift) {}
-} indi_rsi_defaults;
+};
 
 // Defines struct with default user strategy values.
 struct Stg_RSI_Params_Defaults : StgParams {
@@ -46,7 +46,7 @@ struct Stg_RSI_Params_Defaults : StgParams {
     Set(STRAT_PARAM_OCT, RSI_OrderCloseTime);
     Set(STRAT_PARAM_SOFT, RSI_SignalOpenFilterTime);
   }
-} stg_rsi_defaults;
+};
 
 #ifdef __config__
 // Loads pair specific param values.
@@ -66,7 +66,9 @@ class Stg_RSI : public Strategy {
 
   static Stg_RSI *Init(ENUM_TIMEFRAMES _tf = NULL) {
     // Initialize strategy initial values.
+    Indi_RSI_Params_Defaults indi_rsi_defaults;
     RSIParams _indi_params(indi_rsi_defaults, _tf);
+    Stg_RSI_Params_Defaults stg_rsi_defaults;
     StgParams _stg_params(stg_rsi_defaults);
 #ifdef __config__
     SetParamsByTf<RSIParams>(_indi_params, _tf, indi_rsi_m1, indi_rsi_m5, indi_rsi_m15, indi_rsi_m30, indi_rsi_h1,
