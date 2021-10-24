@@ -30,8 +30,9 @@ INPUT int RSI_Indi_RSI_Shift = 0;                                      // Shift
 // Structs.
 
 // Defines struct with default user indicator values.
-struct Indi_RSI_Params_Defaults : RSIParams {
-  Indi_RSI_Params_Defaults() : RSIParams(::RSI_Indi_RSI_Period, ::RSI_Indi_RSI_Applied_Price, ::RSI_Indi_RSI_Shift) {}
+struct Indi_RSI_Params_Defaults : IndiRSIParams {
+  Indi_RSI_Params_Defaults()
+      : IndiRSIParams(::RSI_Indi_RSI_Period, ::RSI_Indi_RSI_Applied_Price, ::RSI_Indi_RSI_Shift) {}
 };
 
 // Defines struct with default user strategy values.
@@ -67,12 +68,12 @@ class Stg_RSI : public Strategy {
   static Stg_RSI *Init(ENUM_TIMEFRAMES _tf = NULL) {
     // Initialize strategy initial values.
     Indi_RSI_Params_Defaults indi_rsi_defaults;
-    RSIParams _indi_params(indi_rsi_defaults, _tf);
+    IndiRSIParams _indi_params(indi_rsi_defaults, _tf);
     Stg_RSI_Params_Defaults stg_rsi_defaults;
     StgParams _stg_params(stg_rsi_defaults);
 #ifdef __config__
-    SetParamsByTf<RSIParams>(_indi_params, _tf, indi_rsi_m1, indi_rsi_m5, indi_rsi_m15, indi_rsi_m30, indi_rsi_h1,
-                             indi_rsi_h4, indi_rsi_h8);
+    SetParamsByTf<IndiRSIParams>(_indi_params, _tf, indi_rsi_m1, indi_rsi_m5, indi_rsi_m15, indi_rsi_m30, indi_rsi_h1,
+                                 indi_rsi_h4, indi_rsi_h8);
     SetParamsByTf<StgParams>(_stg_params, _tf, stg_rsi_m1, stg_rsi_m5, stg_rsi_m15, stg_rsi_m30, stg_rsi_h1, stg_rsi_h4,
                              stg_rsi_h8);
 #endif
