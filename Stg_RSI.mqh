@@ -29,12 +29,6 @@ INPUT int RSI_Indi_RSI_Shift = 0;                                      // Shift
 
 // Structs.
 
-// Defines struct with default user indicator values.
-struct Indi_RSI_Params_Defaults : IndiRSIParams {
-  Indi_RSI_Params_Defaults()
-      : IndiRSIParams(::RSI_Indi_RSI_Period, ::RSI_Indi_RSI_Applied_Price, ::RSI_Indi_RSI_Shift) {}
-};
-
 // Defines struct with default user strategy values.
 struct Stg_RSI_Params_Defaults : StgParams {
   Stg_RSI_Params_Defaults()
@@ -85,8 +79,8 @@ class Stg_RSI : public Strategy {
    * Event on strategy's init.
    */
   void OnInit() {
-    Indi_RSI_Params_Defaults indi_rsi_defaults;
-    IndiRSIParams _indi_params(indi_rsi_defaults, Get<ENUM_TIMEFRAMES>(STRAT_PARAM_TF));
+    IndiRSIParams _indi_params(::RSI_Indi_RSI_Period, ::RSI_Indi_RSI_Applied_Price, ::RSI_Indi_RSI_Shift);
+    _indi_params.SetTf(Get<ENUM_TIMEFRAMES>(STRAT_PARAM_TF));
     SetIndicator(new Indi_RSI(_indi_params));
   }
 
