@@ -67,13 +67,9 @@ class Stg_RSI : public Strategy {
 
   static Stg_RSI *Init(ENUM_TIMEFRAMES _tf = NULL) {
     // Initialize strategy initial values.
-    Indi_RSI_Params_Defaults indi_rsi_defaults;
-    IndiRSIParams _indi_params(indi_rsi_defaults, _tf);
     Stg_RSI_Params_Defaults stg_rsi_defaults;
     StgParams _stg_params(stg_rsi_defaults);
 #ifdef __config__
-    SetParamsByTf<IndiRSIParams>(_indi_params, _tf, indi_rsi_m1, indi_rsi_m5, indi_rsi_m15, indi_rsi_m30, indi_rsi_h1,
-                                 indi_rsi_h4, indi_rsi_h8);
     SetParamsByTf<StgParams>(_stg_params, _tf, stg_rsi_m1, stg_rsi_m5, stg_rsi_m15, stg_rsi_m30, stg_rsi_h1, stg_rsi_h4,
                              stg_rsi_h8);
 #endif
@@ -82,8 +78,16 @@ class Stg_RSI : public Strategy {
     ChartParams _cparams(_tf, _Symbol);
     TradeParams _tparams;
     Strategy *_strat = new Stg_RSI(_stg_params, _tparams, _cparams, "RSI");
-    _strat.SetIndicator(new Indi_RSI(_indi_params));
     return _strat;
+  }
+
+  /**
+   * Event on strategy's init.
+   */
+  void OnInit() {
+    Indi_RSI_Params_Defaults indi_rsi_defaults;
+    IndiRSIParams _indi_params(indi_rsi_defaults, Get<ENUM_TIMEFRAMES>(STRAT_PARAM_TF));
+    SetIndicator(new Indi_RSI(_indi_params));
   }
 
   /**
