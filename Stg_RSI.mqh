@@ -59,7 +59,7 @@ class Stg_RSI : public Strategy {
   Stg_RSI(StgParams &_sparams, TradeParams &_tparams, ChartParams &_cparams, string _name = "")
       : Strategy(_sparams, _tparams, _cparams, _name) {}
 
-  static Stg_RSI *Init(ENUM_TIMEFRAMES _tf = NULL) {
+  static Stg_RSI *Init(ENUM_TIMEFRAMES _tf = NULL, EA* _ea = NULL) {
     // Initialize strategy initial values.
     Stg_RSI_Params_Defaults stg_rsi_defaults;
     StgParams _stg_params(stg_rsi_defaults);
